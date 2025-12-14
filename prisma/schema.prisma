@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Enums
+enum UserRole {
+  SYSTEM_ADMIN
+  KABALE_ADMIN
+  CITIZEN
+}
+
+enum IdApplicationStatus {
+  DRAFT
+  SUBMITTED
+  PENDING_VERIFICATION
+  APPROVED
+  REJECTED
+}
+
+enum DigitalIdStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum VerificationResult {
+  APPROVED
+  REJECTED
+}
+
+// Models
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  phone     String?  @unique
+  passwordHash String
+  firstName String?
+  lastName  String?
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  kabaleAdminProfile KabaleAdminProfile?
+  citizenProfile     CitizenProfile?
+
+  // Audit relations
+  verificationLogs VerificationLog[]
+  sessions          Session[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([role])
+}
+
+model Kabale {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  address     String?
+  phone       String?
+  email       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  admins         KabaleAdminProfile[]
+  idApplications IdApplication[]
+
+  @@index([code])
+  @@index([name])
+}
+
+model KabaleAdminProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  kabaleId  String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kabale Kabale @relation(fields: [kabaleId], references: [id], onDelete: Restrict)
+
+  @@index([kabaleId])
+  @@index([userId])
+}
+
+model CitizenProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  dateOfBirth   DateTime
+  gender        String?
+  phone         String?
+  address       String?
+  photoUrl      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  idApplications IdApplication[]
+  digitalIds     DigitalId[]
+
+  @@index([userId])
+}
+
+model IdApplication {
+  id          String              @id @default(cuid())
+  citizenId   String
+  kabaleId    String
+  status      IdApplicationStatus @default(DRAFT)
+  submittedAt DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  // Relations
+  citizenProfile  CitizenProfile  @relation(fields: [citizenId], references: [id], onDelete: Cascade)
+  kabale          Kabale          @relation(fields: [kabaleId], references: [id], onDelete: Restrict)
+  digitalId       DigitalId?
+  verificationLogs VerificationLog[]
+
+  @@index([citizenId])
+  @@index([kabaleId])
+  @@index([status])
+  @@index([submittedAt])
+}
+
+model DigitalId {
+  id            String          @id @default(cuid())
+  applicationId String          @unique
+  citizenId     String
+  status        DigitalIdStatus @default(ACTIVE)
+  issuedAt      DateTime        @default(now())
+  expiresAt     DateTime?
+  revokedAt     DateTime?
+  revokedBy    String?
+  revokedReason String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  // Relations
+  application IdApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  citizen     CitizenProfile @relation(fields: [citizenId], references: [id], onDelete: Cascade)
+
+  @@index([citizenId])
+  @@index([status])
+  @@index([applicationId])
+  // Note: One active Digital ID per citizen is enforced at application level
+  // We can add a partial unique index: @@unique([citizenId, status]) where status = 'ACTIVE'
+  // However, Prisma doesn't support partial indexes directly, so this should be enforced in application logic
+}
+
+model VerificationLog {
+  id            String            @id @default(cuid())
+  applicationId String
+  verifiedBy    String
+  result        VerificationResult
+  notes         String?
+  verifiedAt    DateTime          @default(now())
+  createdAt     DateTime          @default(now())
+  // Note: No updatedAt - verification logs are immutable
+
+  // Relations
+  application IdApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  verifier    User          @relation(fields: [verifiedBy], references: [id], onDelete: Restrict)
+
+  @@index([applicationId])
+  @@index([verifiedBy])
+  @@index([verifiedAt])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+}

@@ -1,0 +1,88 @@
+You are working on a Kabale Digital ID Card system.
+
+Project Overview:
+This is a single-city digital identity platform where citizens register online and apply for an ID card.
+Each citizen selects an existing Kabale (local administrative unit).
+Final identity verification and approval happens in person at the selected Kabale office.
+There is only ONE city authority in the system; the city is NOT a database entity.
+
+Actors and Roles:
+1. SYSTEM_ADMIN (City Authority)
+   - Governs the entire system.
+   - Creates and manages Kabales.
+   - Assigns Kabale Administrators.
+   - Has read access to all data.
+   - Can revoke Digital IDs with proper audit logging.
+
+2. KABALE_ADMIN
+   - Belongs to exactly one Kabale.
+   - Verifies citizens in person.
+   - Approves or rejects ID applications assigned to their Kabale only.
+   - Cannot manage other Kabales or system settings.
+
+3. CITIZEN
+   - Registers an account.
+   - Completes a personal profile.
+   - Applies for a Digital ID by selecting one Kabale.
+   - Must appear physically at the Kabale for verification.
+   - Can view application status and approved Digital ID.
+
+Core Domain Rules:
+- There is no City model or City table.
+- Kabales are the highest geographic entity in the database.
+- All authorization is role-based.
+- A Kabale Admin can only act within their assigned Kabale.
+- A Citizen can have only one active Digital ID at a time.
+- ID approval requires in-person verification.
+- All admin actions must be logged and auditable.
+- Verification logs are immutable.
+
+ID Lifecycle:
+ID Application States:
+- DRAFT
+- SUBMITTED
+- PENDING_VERIFICATION
+- APPROVED
+- REJECTED
+
+Digital ID States:
+- ACTIVE
+- REVOKED
+- EXPIRED
+
+Tech Stack Constraints:
+- Framework: TanStack Start with TanStack Router
+- Build Tool: Vite
+- Package Manager: pnpm
+- Language: TypeScript (strict mode)
+- UI: Shadcn UI + Tailwind CSS
+- ORM: Prisma
+- Database: PostgreSQL
+
+Implementation Guidelines:
+- Favor explicit, readable TypeScript.
+- Enforce business rules at both application and database levels.
+- Do not introduce unnecessary abstractions or entities.
+- Do not add multi-city logic.
+- All sensitive operations must be protected by role checks.
+- Use Prisma relations and constraints correctly.
+- Prefer server functions for sensitive logic.
+
+When generating code:
+- Follow the domain rules strictly.
+- Do not invent features outside the defined scope.
+- Ask for clarification only if a requirement is ambiguous.
+- Optimize for maintainability and auditability, not shortcuts.
+
+# shadcn instructions
+
+Use the latest version of Shadcn to install new components, like this command to add a button component:
+
+```bash
+pnpm dlx shadcn@latest add button
+```
+
+instead of using zodResolver use zodV4Resolver from src/lib/zodV4Resolver.ts
+
+
+don't access prisma in loader, instead use server function
