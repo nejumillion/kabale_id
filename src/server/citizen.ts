@@ -35,9 +35,7 @@ export const getCitizenApplicationsFn = createServerFn({
       kabale: {
         select: {
           name: true,
-          code: true,
           address: true,
-          phone: true,
         },
       },
       digitalId: true,
@@ -92,7 +90,7 @@ export const getCitizenDigitalIdsFn = createServerFn({ method: 'GET' }).handler(
           kabale: {
             select: {
               name: true,
-              code: true,
+              address: true,
             },
           },
         },
@@ -136,7 +134,7 @@ export const getCitizenDashboardFn = createServerFn({ method: 'GET' }).handler(a
         kabale: {
           select: {
             name: true,
-            code: true,
+            address: true,
           },
         },
         digitalId: true,
@@ -155,7 +153,7 @@ export const getCitizenDashboardFn = createServerFn({ method: 'GET' }).handler(a
             kabale: {
               select: {
                 name: true,
-                code: true,
+                address: true,
               },
             },
           },
@@ -215,8 +213,6 @@ export const createCitizenProfileFn = createServerFn({ method: 'POST' })
       const profile = await prisma.citizenProfile.create({
         data: {
           userId,
-          firstName: data.firstName,
-          lastName: data.lastName,
           dateOfBirth: data.dateOfBirth,
           gender: data.gender || null,
           phone: data.phone || null,
@@ -227,7 +223,6 @@ export const createCitizenProfileFn = createServerFn({ method: 'POST' })
             select: {
               id: true,
               email: true,
-              phone: true,
               role: true,
             },
           },
@@ -310,9 +305,7 @@ export const createIdApplicationFn = createServerFn({ method: 'POST' })
           kabale: {
             select: {
               name: true,
-              code: true,
               address: true,
-              phone: true,
             },
           },
           digitalId: true,
@@ -337,7 +330,7 @@ export const createIdApplicationFn = createServerFn({ method: 'POST' })
  * Can only update DRAFT applications
  * Updates the Kabale selection
  */
-export const updateIdApplicationFn = createServerFn({ method: 'PUT' })
+export const updateIdApplicationFn = createServerFn({ method: 'POST' })
   .middleware([requireCitizenMiddleware])
   .inputValidator(
     idApplicationSchema.extend({
@@ -408,9 +401,7 @@ export const updateIdApplicationFn = createServerFn({ method: 'PUT' })
           kabale: {
             select: {
               name: true,
-              code: true,
               address: true,
-              phone: true,
             },
           },
           digitalId: true,
@@ -508,9 +499,7 @@ export const submitIdApplicationFn = createServerFn({ method: 'POST' })
           kabale: {
             select: {
               name: true,
-              code: true,
               address: true,
-              phone: true,
             },
           },
           digitalId: true,

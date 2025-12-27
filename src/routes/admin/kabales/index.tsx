@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { getAllKabalesFn } from '@/server/kabales';
 
-export const Route = createFileRoute('/admin/system/kabales/')({
+export const Route = createFileRoute('/admin/kabales/')({
   loader: async () => {
     // Load all Kabales via server function (system admin access enforced in server function)
     const result = await getAllKabalesFn();
@@ -34,7 +34,7 @@ function SystemKabalesPage() {
             Manage administrative units
           </p>
         </div>
-        <Link to="/admin/system/kabales/create">
+        <Link to="/admin/kabales/create">
           <Button>
             <PlusIcon className="size-4" />
             Create Kabale
@@ -53,7 +53,7 @@ function SystemKabalesPage() {
           {kabales.length === 0 ? (
             <div className="py-8 text-center text-muted-foreground">
               <p>No Kabales found</p>
-              <Link to="/admin/system/kabales/create">
+              <Link to="/admin/kabales/create">
                 <Button variant="outline" className="mt-4">
                   Create First Kabale
                 </Button>
@@ -64,10 +64,7 @@ function SystemKabalesPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Code</TableHead>
                   <TableHead>Address</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Email</TableHead>
                   <TableHead>Admins</TableHead>
                   <TableHead>Applications</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -77,18 +74,11 @@ function SystemKabalesPage() {
                 {kabales.map((kabale: (typeof kabales)[0]) => (
                   <TableRow key={kabale.id}>
                     <TableCell className="font-medium">{kabale.name}</TableCell>
-                    <TableCell>
-                      <code className="text-sm bg-muted px-1 py-0.5 rounded">
-                        {kabale.code}
-                      </code>
-                    </TableCell>
                     <TableCell>{kabale.address || '-'}</TableCell>
-                    <TableCell>{kabale.phone || '-'}</TableCell>
-                    <TableCell>{kabale.email || '-'}</TableCell>
                     <TableCell>{kabale._count.admins}</TableCell>
                     <TableCell>{kabale._count.idApplications}</TableCell>
                     <TableCell className="text-right">
-                      <Link to="/admin/system/kabales/$kabaleId" params={{ kabaleId: kabale.id }}>
+                      <Link to="/admin/kabales/$kabaleId" params={{ kabaleId: kabale.id }}>
                         <Button variant="ghost" size="sm">
                           View
                         </Button>

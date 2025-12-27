@@ -17,54 +17,67 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodV4Resolver } from '@/lib/zodV4Resolver';
-import { createKabaleFn } from '@/server/kabales';
+import { getKabaleByIdFn, updateKabaleFn } from '@/server/kabales';
 
-const createKabaleSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  code: z.string().min(1, 'Code is required'),
+const updateKabaleSchema = z.object({
+  name: z.string().min(1, 'Name is required').optional(),
+  code: z.string().min(1, 'Code is required').optional(),
   address: z.string().optional(),
   phone: z.string().optional(),
   email: z.string().email('Invalid email address').optional().or(z.literal('')),
 });
 
-type CreateKabaleFormValues = z.infer<typeof createKabaleSchema>;
+type UpdateKabaleFormValues = z.infer<typeof updateKabaleSchema>;
 
-export const Route = createFileRoute('/admin/system/kabales/create')({
-  component: CreateKabalePage,
+export const Route = createFileRoute('/admin/kabales/$kabaleId/edit')({
+  loader: async ({ params }) => {
+    const result = await getKabaleByIdFn({ data: { kabaleId: params.kabaleId } });
+
+    if (!result.success) {
+      throw new Response('Kabale not found', { status: 404 });
+    }
+
+    return { kabale: result.kabale };
+  },
+  component: UpdateKabalePage,
 });
 
-function CreateKabalePage() {
+function UpdateKabalePage() {
   const navigate = useNavigate();
+  const { kabale } = Route.useLoaderData();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const createKabaleFunction = useServerFn(createKabaleFn);
+  const updateKabaleFunction = useServerFn(updateKabaleFn);
 
-  const form = useForm<CreateKabaleFormValues>({
-    resolver: zodV4Resolver(createKabaleSchema),
+  const form = useForm<UpdateKabaleFormValues>({
+    resolver: zodV4Resolver(updateKabaleSchema),
     defaultValues: {
-      name: '',
-      code: '',
-      address: '',
-      phone: '',
-      email: '',
+      name: kabale.name,
+      address: kabale.address || '',
     },
   });
 
-  const onSubmit = async (data: CreateKabaleFormValues) => {
+  const onSubmit = async (data: UpdateKabaleFormValues) => {
     setError(null);
     setIsLoading(true);
 
     try {
-      const result = await createKabaleFunction({ data });
+      const updateData: UpdateKabaleFormValues & { kabaleId: string } = {
+        kabaleId: kabale.id,
+        ...(data.name && { name: data.name }),
+        ...(data.address !== undefined && { address: data.address }),
+      };
 
-      if (result.success && result.kabale) {
-        navigate({ to: '/admin/system/kabales/$kabaleId', params: { kabaleId: result.kabale.id } });
+      const result = await updateKabaleFunction({ data: updateData });
+
+      if (result.success) {
+        navigate({ to: '/admin/kabales/$kabaleId', params: { kabaleId: kabale.id } });
       } else {
-        setError(result.error || 'Failed to create Kabale');
+        setError(result.error || 'Failed to update Kabale');
       }
     } catch (err) {
-      setError('An error occurred while creating the Kabale. Please try again.');
-      console.error('Create Kabale error:', err);
+      setError('An error occurred while updating the Kabale. Please try again.');
+      console.error('Update Kabale error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -73,15 +86,15 @@ function CreateKabalePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link to="/admin/system/kabales">
+        <Link to="/admin/kabales/$kabaleId" params={{ kabaleId: kabale.id }}>
           <Button variant="ghost" size="icon">
             <ArrowLeftIcon className="size-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Create Kabale</h1>
+          <h1 className="text-3xl font-bold">Edit Kabale</h1>
           <p className="text-muted-foreground mt-2">
-            Add a new administrative unit
+            Update Kabale information
           </p>
         </div>
       </div>
@@ -90,7 +103,7 @@ function CreateKabalePage() {
         <CardHeader>
           <CardTitle>Kabale Information</CardTitle>
           <CardDescription>
-            Enter the details for the new Kabale
+            Update the Kabale details below
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -110,7 +123,7 @@ function CreateKabalePage() {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Kabale Name" {...field} />
+                        <Input placeholder="Kabale Name" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -124,7 +137,7 @@ function CreateKabalePage() {
                     <FormItem>
                       <FormLabel>Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="KAB001" {...field} />
+                        <Input placeholder="KAB001" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                       <div className="text-sm text-muted-foreground">
@@ -181,9 +194,9 @@ function CreateKabalePage() {
 
               <div className="flex gap-4">
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading ? 'Creating...' : 'Create Kabale'}
+                  {isLoading ? 'Updating...' : 'Update Kabale'}
                 </Button>
-                <Link to="/admin/system/kabales">
+                <Link to="/admin/kabales/$kabaleId" params={{ kabaleId: kabale.id }}>
                   <Button type="button" variant="outline">
                     Cancel
                   </Button>

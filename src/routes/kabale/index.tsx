@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getKabaleAdminDashboardFn } from '@/server/kabales';
 
-export const Route = createFileRoute('/admin/kabale/')({
+export const Route = createFileRoute('/kabale/')({
   loader: async () => {
     const result = await getKabaleAdminDashboardFn();
     if (!result.success) {
@@ -22,7 +22,7 @@ function KabaleAdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold">{kabale.name} Dashboard</h1>
         <p className="text-muted-foreground mt-2">
-          Code: <code className="bg-muted px-1 py-0.5 rounded text-sm">{kabale.code}</code>
+          Address: <code className="bg-muted px-1 py-0.5 rounded text-sm">{kabale.address}</code>
         </p>
       </div>
 
@@ -36,7 +36,7 @@ function KabaleAdminDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalApplications}</div>
             <Link
-              to="/admin/kabale/applications"
+              to="/kabale/applications"
               className="mt-2 text-xs text-primary hover:underline"
             >
               View all applications →
@@ -147,28 +147,10 @@ function KabaleAdminDashboard() {
               <div className="text-sm text-muted-foreground">Name</div>
               <div className="text-lg font-medium">{kabale.name}</div>
             </div>
-            <div>
-              <div className="text-sm text-muted-foreground">Code</div>
-              <div className="text-lg">
-                <code className="bg-muted px-2 py-1 rounded text-sm">{kabale.code}</code>
-              </div>
-            </div>
             {kabale.address && (
               <div>
                 <div className="text-sm text-muted-foreground">Address</div>
                 <div className="text-lg">{kabale.address}</div>
-              </div>
-            )}
-            {kabale.phone && (
-              <div>
-                <div className="text-sm text-muted-foreground">Phone</div>
-                <div className="text-lg">{kabale.phone}</div>
-              </div>
-            )}
-            {kabale.email && (
-              <div>
-                <div className="text-sm text-muted-foreground">Email</div>
-                <div className="text-lg">{kabale.email}</div>
               </div>
             )}
           </div>

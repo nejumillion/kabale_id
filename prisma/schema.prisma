@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 // Enums
@@ -61,10 +61,8 @@ model User {
 model Kabale {
   id          String   @id @default(cuid())
   name        String
-  code        String   @unique
   address     String?
-  phone       String?
-  email       String?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -72,7 +70,6 @@ model Kabale {
   admins         KabaleAdminProfile[]
   idApplications IdApplication[]
 
-  @@index([code])
   @@index([name])
 }
 
@@ -152,9 +149,6 @@ model DigitalId {
   @@index([citizenId])
   @@index([status])
   @@index([applicationId])
-  // Note: One active Digital ID per citizen is enforced at application level
-  // We can add a partial unique index: @@unique([citizenId, status]) where status = 'ACTIVE'
-  // However, Prisma doesn't support partial indexes directly, so this should be enforced in application logic
 }
 
 model VerificationLog {
@@ -165,7 +159,6 @@ model VerificationLog {
   notes         String?
   verifiedAt    DateTime          @default(now())
   createdAt     DateTime          @default(now())
-  // Note: No updatedAt - verification logs are immutable
 
   // Relations
   application IdApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)

@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getSystemStatsFn } from '@/server/system';
 
-export const Route = createFileRoute('/admin/system/')({
+export const Route = createFileRoute('/admin/')({
   loader: async () => {
     const result = await getSystemStatsFn();
     return { stats: result.stats };
@@ -50,7 +50,7 @@ function RouteComponent() {
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalKabales}</div>
             <Link
-              to="/admin/system/kabales"
+              to="/admin/kabales"
               className="mt-2 text-xs text-primary hover:underline"
             >
               View all Kabales →
@@ -142,7 +142,7 @@ function RouteComponent() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Link
-              to="/admin/system/users"
+              to="/admin/users"
               className="rounded-lg border p-4 hover:bg-accent transition-colors"
             >
               <div className="font-medium">Users</div>
@@ -151,7 +151,7 @@ function RouteComponent() {
               </div>
             </Link>
             <Link
-              to="/admin/system/kabales"
+              to="/admin/kabales"
               className="rounded-lg border p-4 hover:bg-accent transition-colors"
             >
               <div className="font-medium">Kabales</div>
@@ -160,7 +160,7 @@ function RouteComponent() {
               </div>
             </Link>
             <Link
-              to="/admin/system/citizens"
+              to="/admin/citizens"
               className="rounded-lg border p-4 hover:bg-accent transition-colors"
             >
               <div className="font-medium">Citizens</div>
@@ -169,7 +169,7 @@ function RouteComponent() {
               </div>
             </Link>
             <Link
-              to="/admin/system/digital-ids"
+              to="/admin/digital-ids"
               className="rounded-lg border p-4 hover:bg-accent transition-colors"
             >
               <div className="font-medium">Digital IDs</div>

@@ -1,41 +1,38 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
-import { useRouter } from '@tanstack/react-router';
-import { useServerFn } from '@tanstack/react-start';
-import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
-import { getKabaleAdminApplicationsFn, reviewApplicationFn } from '@/server/kabales';
+import { reviewApplicationFn } from '@/server/kabales';
+import { getAllApplicationsFn } from '@/server/system';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/react-start';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-export const Route = createFileRoute('/admin/kabale/applications')({
+export const Route = createFileRoute('/admin/applications/')({
   loader: async () => {
     // Load applications via server function (Kabale admin access enforced in server function)
-    const result = await getKabaleAdminApplicationsFn();
+    const result = await getAllApplicationsFn();
 
     if (!result.success) {
-      throw new Response(
-        'error' in result ? result.error : 'Failed to load applications',
-        { status: 500 }
-      );
+       return { applications: [] };
     }
 
     return { applications: result.applications };

@@ -53,7 +53,7 @@ const updateUserSchema = z
 
 type UpdateUserFormValues = z.infer<typeof updateUserSchema>;
 
-export const Route = createFileRoute('/admin/system/users/$userId/edit')({
+export const Route = createFileRoute('/admin/users/$userId/edit')({
   loader: async ({ params }) => {
     const [userResult, kabalesResult] = await Promise.all([
       getUserByIdFn({ data: { userId: params.userId } }),
@@ -114,7 +114,7 @@ function UpdateUserPage() {
       const result = await updateUserFunction({ data: updateData });
 
       if (result.success) {
-        navigate({ to: '/admin/system/users/$userId', params: { userId: user.id } });
+        navigate({ to: '/admin/users/$userId', params: { userId: user.id } });
       } else {
         setError(result.error || 'Failed to update user');
       }
@@ -129,7 +129,7 @@ function UpdateUserPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link to="/admin/system/users/$userId" params={{ userId: user.id }}>
+        <Link to="/admin/users/$userId" params={{ userId: user.id }}>
           <Button variant="ghost" size="icon">
             <ArrowLeftIcon className="size-4" />
           </Button>
@@ -306,7 +306,7 @@ function UpdateUserPage() {
                         <SelectContent>
                           {kabales.map((kabale) => (
                             <SelectItem key={kabale.id} value={kabale.id}>
-                              {kabale.name} ({kabale.code})
+                              {kabale.name} ({kabale.address})
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -321,7 +321,7 @@ function UpdateUserPage() {
                 <Button type="submit" disabled={isLoading}>
                   {isLoading ? 'Updating...' : 'Update User'}
                 </Button>
-                <Link to="/admin/system/users/$userId" params={{ userId: user.id }}>
+                <Link to="/admin/users/$userId" params={{ userId: user.id }}>
                   <Button type="button" variant="outline">
                     Cancel
                   </Button>

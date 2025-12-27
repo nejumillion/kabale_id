@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -8,12 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getKabaleDigitalIdsFn } from '@/server/system';
-import { createFileRoute } from '@tanstack/react-router';
+import { getAllDigitalIdsFn } from '@/server/system';
 
-export const Route = createFileRoute('/admin/kabale/digital-ids')({
+export const Route = createFileRoute('/admin/digital-ids/')({
   loader: async () => {
-    const result = await getKabaleDigitalIdsFn();
+    const result = await getAllDigitalIdsFn();
+    if (!result.success) {
+      throw new Response('Failed to load digital IDs', { status: 500 });
+    }
     return { digitalIds: result.digitalIds };
   },
   component: DigitalIdsPage,

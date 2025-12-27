@@ -14,27 +14,27 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForbiddenRouteImport } from './routes/forbidden'
+import { Route as KabaleRouteRouteImport } from './routes/kabale/route'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KabaleIndexRouteImport } from './routes/kabale/index'
 import { Route as CitizenIndexRouteImport } from './routes/citizen/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as KabaleDigitalIdsRouteImport } from './routes/kabale/digital-ids'
+import { Route as KabaleApplicationsRouteImport } from './routes/kabale/applications'
 import { Route as CitizenApplicationsRouteImport } from './routes/citizen/applications'
-import { Route as AdminSystemRouteRouteImport } from './routes/admin/system/route'
-import { Route as AdminKabaleRouteRouteImport } from './routes/admin/kabale/route'
-import { Route as AdminSystemIndexRouteImport } from './routes/admin/system/index'
-import { Route as AdminKabaleIndexRouteImport } from './routes/admin/kabale/index'
-import { Route as AdminKabaleDigitalIdsRouteImport } from './routes/admin/kabale/digital-ids'
-import { Route as AdminKabaleApplicationsRouteImport } from './routes/admin/kabale/applications'
-import { Route as AdminSystemUsersIndexRouteImport } from './routes/admin/system/users/index'
-import { Route as AdminSystemKabalesIndexRouteImport } from './routes/admin/system/kabales/index'
-import { Route as AdminSystemDigitalIdsIndexRouteImport } from './routes/admin/system/digital-ids/index'
-import { Route as AdminSystemCitizensIndexRouteImport } from './routes/admin/system/citizens/index'
-import { Route as AdminSystemApplicationsIndexRouteImport } from './routes/admin/system/applications/index'
-import { Route as AdminSystemUsersCreateRouteImport } from './routes/admin/system/users/create'
-import { Route as AdminSystemUsersUserIdRouteImport } from './routes/admin/system/users/$userId_'
-import { Route as AdminSystemKabalesCreateRouteImport } from './routes/admin/system/kabales/create'
-import { Route as AdminSystemKabalesKabaleIdRouteImport } from './routes/admin/system/kabales/$kabaleId_'
-import { Route as AdminSystemCitizensCitizenIdRouteImport } from './routes/admin/system/citizens/$citizenId'
-import { Route as AdminSystemUsersUserIdEditRouteImport } from './routes/admin/system/users/$userId.edit'
-import { Route as AdminSystemKabalesKabaleIdEditRouteImport } from './routes/admin/system/kabales/$kabaleId.edit'
+import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
+import { Route as AdminKabalesIndexRouteImport } from './routes/admin/kabales/index'
+import { Route as AdminDigitalIdsIndexRouteImport } from './routes/admin/digital-ids/index'
+import { Route as AdminCitizensIndexRouteImport } from './routes/admin/citizens/index'
+import { Route as AdminApplicationsIndexRouteImport } from './routes/admin/applications/index'
+import { Route as AdminUsersCreateRouteImport } from './routes/admin/users/create'
+import { Route as AdminUsersUserIdRouteImport } from './routes/admin/users/$userId_'
+import { Route as AdminKabalesCreateRouteImport } from './routes/admin/kabales/create'
+import { Route as AdminKabalesKabaleIdRouteImport } from './routes/admin/kabales/$kabaleId_'
+import { Route as AdminCitizensCitizenIdRouteImport } from './routes/admin/citizens/$citizenId'
+import { Route as AdminUsersUserIdEditRouteImport } from './routes/admin/users/$userId.edit'
+import { Route as AdminKabalesKabaleIdEditRouteImport } from './routes/admin/kabales/$kabaleId.edit'
 
 const RegisterProfileRoute = RegisterProfileRouteImport.update({
   id: '/register-profile',
@@ -61,147 +61,140 @@ const ForbiddenRoute = ForbiddenRouteImport.update({
   path: '/forbidden',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KabaleRouteRoute = KabaleRouteRouteImport.update({
+  id: '/kabale',
+  path: '/kabale',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const KabaleIndexRoute = KabaleIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => KabaleRouteRoute,
 } as any)
 const CitizenIndexRoute = CitizenIndexRouteImport.update({
   id: '/citizen/',
   path: '/citizen/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const KabaleDigitalIdsRoute = KabaleDigitalIdsRouteImport.update({
+  id: '/digital-ids',
+  path: '/digital-ids',
+  getParentRoute: () => KabaleRouteRoute,
+} as any)
+const KabaleApplicationsRoute = KabaleApplicationsRouteImport.update({
+  id: '/applications',
+  path: '/applications',
+  getParentRoute: () => KabaleRouteRoute,
+} as any)
 const CitizenApplicationsRoute = CitizenApplicationsRouteImport.update({
   id: '/citizen/applications',
   path: '/citizen/applications',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminSystemRouteRoute = AdminSystemRouteRouteImport.update({
-  id: '/admin/system',
-  path: '/admin/system',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminKabaleRouteRoute = AdminKabaleRouteRouteImport.update({
-  id: '/admin/kabale',
-  path: '/admin/kabale',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminSystemIndexRoute = AdminSystemIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminSystemRouteRoute,
-} as any)
-const AdminKabaleIndexRoute = AdminKabaleIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminKabaleRouteRoute,
-} as any)
-const AdminKabaleDigitalIdsRoute = AdminKabaleDigitalIdsRouteImport.update({
-  id: '/digital-ids',
-  path: '/digital-ids',
-  getParentRoute: () => AdminKabaleRouteRoute,
-} as any)
-const AdminKabaleApplicationsRoute = AdminKabaleApplicationsRouteImport.update({
-  id: '/applications',
-  path: '/applications',
-  getParentRoute: () => AdminKabaleRouteRoute,
-} as any)
-const AdminSystemUsersIndexRoute = AdminSystemUsersIndexRouteImport.update({
+const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
-  getParentRoute: () => AdminSystemRouteRoute,
+  getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminSystemKabalesIndexRoute = AdminSystemKabalesIndexRouteImport.update({
+const AdminKabalesIndexRoute = AdminKabalesIndexRouteImport.update({
   id: '/kabales/',
   path: '/kabales/',
-  getParentRoute: () => AdminSystemRouteRoute,
+  getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminSystemDigitalIdsIndexRoute =
-  AdminSystemDigitalIdsIndexRouteImport.update({
-    id: '/digital-ids/',
-    path: '/digital-ids/',
-    getParentRoute: () => AdminSystemRouteRoute,
-  } as any)
-const AdminSystemCitizensIndexRoute =
-  AdminSystemCitizensIndexRouteImport.update({
-    id: '/citizens/',
-    path: '/citizens/',
-    getParentRoute: () => AdminSystemRouteRoute,
-  } as any)
-const AdminSystemApplicationsIndexRoute =
-  AdminSystemApplicationsIndexRouteImport.update({
-    id: '/applications/',
-    path: '/applications/',
-    getParentRoute: () => AdminSystemRouteRoute,
-  } as any)
-const AdminSystemUsersCreateRoute = AdminSystemUsersCreateRouteImport.update({
+const AdminDigitalIdsIndexRoute = AdminDigitalIdsIndexRouteImport.update({
+  id: '/digital-ids/',
+  path: '/digital-ids/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminCitizensIndexRoute = AdminCitizensIndexRouteImport.update({
+  id: '/citizens/',
+  path: '/citizens/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminApplicationsIndexRoute = AdminApplicationsIndexRouteImport.update({
+  id: '/applications/',
+  path: '/applications/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminUsersCreateRoute = AdminUsersCreateRouteImport.update({
   id: '/users/create',
   path: '/users/create',
-  getParentRoute: () => AdminSystemRouteRoute,
+  getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminSystemUsersUserIdRoute = AdminSystemUsersUserIdRouteImport.update({
+const AdminUsersUserIdRoute = AdminUsersUserIdRouteImport.update({
   id: '/users/$userId_',
   path: '/users/$userId',
-  getParentRoute: () => AdminSystemRouteRoute,
+  getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminSystemKabalesCreateRoute =
-  AdminSystemKabalesCreateRouteImport.update({
-    id: '/kabales/create',
-    path: '/kabales/create',
-    getParentRoute: () => AdminSystemRouteRoute,
-  } as any)
-const AdminSystemKabalesKabaleIdRoute =
-  AdminSystemKabalesKabaleIdRouteImport.update({
-    id: '/kabales/$kabaleId_',
-    path: '/kabales/$kabaleId',
-    getParentRoute: () => AdminSystemRouteRoute,
-  } as any)
-const AdminSystemCitizensCitizenIdRoute =
-  AdminSystemCitizensCitizenIdRouteImport.update({
-    id: '/citizens/$citizenId',
-    path: '/citizens/$citizenId',
-    getParentRoute: () => AdminSystemRouteRoute,
-  } as any)
-const AdminSystemUsersUserIdEditRoute =
-  AdminSystemUsersUserIdEditRouteImport.update({
-    id: '/users/$userId/edit',
-    path: '/users/$userId/edit',
-    getParentRoute: () => AdminSystemRouteRoute,
-  } as any)
-const AdminSystemKabalesKabaleIdEditRoute =
-  AdminSystemKabalesKabaleIdEditRouteImport.update({
+const AdminKabalesCreateRoute = AdminKabalesCreateRouteImport.update({
+  id: '/kabales/create',
+  path: '/kabales/create',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminKabalesKabaleIdRoute = AdminKabalesKabaleIdRouteImport.update({
+  id: '/kabales/$kabaleId_',
+  path: '/kabales/$kabaleId',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminCitizensCitizenIdRoute = AdminCitizensCitizenIdRouteImport.update({
+  id: '/citizens/$citizenId',
+  path: '/citizens/$citizenId',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminUsersUserIdEditRoute = AdminUsersUserIdEditRouteImport.update({
+  id: '/users/$userId/edit',
+  path: '/users/$userId/edit',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminKabalesKabaleIdEditRoute =
+  AdminKabalesKabaleIdEditRouteImport.update({
     id: '/kabales/$kabaleId/edit',
     path: '/kabales/$kabaleId/edit',
-    getParentRoute: () => AdminSystemRouteRoute,
+    getParentRoute: () => AdminRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/kabale': typeof KabaleRouteRouteWithChildren
   '/forbidden': typeof ForbiddenRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/register-profile': typeof RegisterProfileRoute
-  '/admin/kabale': typeof AdminKabaleRouteRouteWithChildren
-  '/admin/system': typeof AdminSystemRouteRouteWithChildren
   '/citizen/applications': typeof CitizenApplicationsRoute
+  '/kabale/applications': typeof KabaleApplicationsRoute
+  '/kabale/digital-ids': typeof KabaleDigitalIdsRoute
+  '/admin/': typeof AdminIndexRoute
   '/citizen': typeof CitizenIndexRoute
-  '/admin/kabale/applications': typeof AdminKabaleApplicationsRoute
-  '/admin/kabale/digital-ids': typeof AdminKabaleDigitalIdsRoute
-  '/admin/kabale/': typeof AdminKabaleIndexRoute
-  '/admin/system/': typeof AdminSystemIndexRoute
-  '/admin/system/citizens/$citizenId': typeof AdminSystemCitizensCitizenIdRoute
-  '/admin/system/kabales/$kabaleId': typeof AdminSystemKabalesKabaleIdRoute
-  '/admin/system/kabales/create': typeof AdminSystemKabalesCreateRoute
-  '/admin/system/users/$userId': typeof AdminSystemUsersUserIdRoute
-  '/admin/system/users/create': typeof AdminSystemUsersCreateRoute
-  '/admin/system/applications': typeof AdminSystemApplicationsIndexRoute
-  '/admin/system/citizens': typeof AdminSystemCitizensIndexRoute
-  '/admin/system/digital-ids': typeof AdminSystemDigitalIdsIndexRoute
-  '/admin/system/kabales': typeof AdminSystemKabalesIndexRoute
-  '/admin/system/users': typeof AdminSystemUsersIndexRoute
-  '/admin/system/kabales/$kabaleId/edit': typeof AdminSystemKabalesKabaleIdEditRoute
-  '/admin/system/users/$userId/edit': typeof AdminSystemUsersUserIdEditRoute
+  '/kabale/': typeof KabaleIndexRoute
+  '/admin/citizens/$citizenId': typeof AdminCitizensCitizenIdRoute
+  '/admin/kabales/$kabaleId': typeof AdminKabalesKabaleIdRoute
+  '/admin/kabales/create': typeof AdminKabalesCreateRoute
+  '/admin/users/$userId': typeof AdminUsersUserIdRoute
+  '/admin/users/create': typeof AdminUsersCreateRoute
+  '/admin/applications': typeof AdminApplicationsIndexRoute
+  '/admin/citizens': typeof AdminCitizensIndexRoute
+  '/admin/digital-ids': typeof AdminDigitalIdsIndexRoute
+  '/admin/kabales': typeof AdminKabalesIndexRoute
+  '/admin/users': typeof AdminUsersIndexRoute
+  '/admin/kabales/$kabaleId/edit': typeof AdminKabalesKabaleIdEditRoute
+  '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -211,82 +204,82 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/register-profile': typeof RegisterProfileRoute
   '/citizen/applications': typeof CitizenApplicationsRoute
+  '/kabale/applications': typeof KabaleApplicationsRoute
+  '/kabale/digital-ids': typeof KabaleDigitalIdsRoute
+  '/admin': typeof AdminIndexRoute
   '/citizen': typeof CitizenIndexRoute
-  '/admin/kabale/applications': typeof AdminKabaleApplicationsRoute
-  '/admin/kabale/digital-ids': typeof AdminKabaleDigitalIdsRoute
-  '/admin/kabale': typeof AdminKabaleIndexRoute
-  '/admin/system': typeof AdminSystemIndexRoute
-  '/admin/system/citizens/$citizenId': typeof AdminSystemCitizensCitizenIdRoute
-  '/admin/system/kabales/$kabaleId': typeof AdminSystemKabalesKabaleIdRoute
-  '/admin/system/kabales/create': typeof AdminSystemKabalesCreateRoute
-  '/admin/system/users/$userId': typeof AdminSystemUsersUserIdRoute
-  '/admin/system/users/create': typeof AdminSystemUsersCreateRoute
-  '/admin/system/applications': typeof AdminSystemApplicationsIndexRoute
-  '/admin/system/citizens': typeof AdminSystemCitizensIndexRoute
-  '/admin/system/digital-ids': typeof AdminSystemDigitalIdsIndexRoute
-  '/admin/system/kabales': typeof AdminSystemKabalesIndexRoute
-  '/admin/system/users': typeof AdminSystemUsersIndexRoute
-  '/admin/system/kabales/$kabaleId/edit': typeof AdminSystemKabalesKabaleIdEditRoute
-  '/admin/system/users/$userId/edit': typeof AdminSystemUsersUserIdEditRoute
+  '/kabale': typeof KabaleIndexRoute
+  '/admin/citizens/$citizenId': typeof AdminCitizensCitizenIdRoute
+  '/admin/kabales/$kabaleId': typeof AdminKabalesKabaleIdRoute
+  '/admin/kabales/create': typeof AdminKabalesCreateRoute
+  '/admin/users/$userId': typeof AdminUsersUserIdRoute
+  '/admin/users/create': typeof AdminUsersCreateRoute
+  '/admin/applications': typeof AdminApplicationsIndexRoute
+  '/admin/citizens': typeof AdminCitizensIndexRoute
+  '/admin/digital-ids': typeof AdminDigitalIdsIndexRoute
+  '/admin/kabales': typeof AdminKabalesIndexRoute
+  '/admin/users': typeof AdminUsersIndexRoute
+  '/admin/kabales/$kabaleId/edit': typeof AdminKabalesKabaleIdEditRoute
+  '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/kabale': typeof KabaleRouteRouteWithChildren
   '/forbidden': typeof ForbiddenRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/register-profile': typeof RegisterProfileRoute
-  '/admin/kabale': typeof AdminKabaleRouteRouteWithChildren
-  '/admin/system': typeof AdminSystemRouteRouteWithChildren
   '/citizen/applications': typeof CitizenApplicationsRoute
+  '/kabale/applications': typeof KabaleApplicationsRoute
+  '/kabale/digital-ids': typeof KabaleDigitalIdsRoute
+  '/admin/': typeof AdminIndexRoute
   '/citizen/': typeof CitizenIndexRoute
-  '/admin/kabale/applications': typeof AdminKabaleApplicationsRoute
-  '/admin/kabale/digital-ids': typeof AdminKabaleDigitalIdsRoute
-  '/admin/kabale/': typeof AdminKabaleIndexRoute
-  '/admin/system/': typeof AdminSystemIndexRoute
-  '/admin/system/citizens/$citizenId': typeof AdminSystemCitizensCitizenIdRoute
-  '/admin/system/kabales/$kabaleId_': typeof AdminSystemKabalesKabaleIdRoute
-  '/admin/system/kabales/create': typeof AdminSystemKabalesCreateRoute
-  '/admin/system/users/$userId_': typeof AdminSystemUsersUserIdRoute
-  '/admin/system/users/create': typeof AdminSystemUsersCreateRoute
-  '/admin/system/applications/': typeof AdminSystemApplicationsIndexRoute
-  '/admin/system/citizens/': typeof AdminSystemCitizensIndexRoute
-  '/admin/system/digital-ids/': typeof AdminSystemDigitalIdsIndexRoute
-  '/admin/system/kabales/': typeof AdminSystemKabalesIndexRoute
-  '/admin/system/users/': typeof AdminSystemUsersIndexRoute
-  '/admin/system/kabales/$kabaleId/edit': typeof AdminSystemKabalesKabaleIdEditRoute
-  '/admin/system/users/$userId/edit': typeof AdminSystemUsersUserIdEditRoute
+  '/kabale/': typeof KabaleIndexRoute
+  '/admin/citizens/$citizenId': typeof AdminCitizensCitizenIdRoute
+  '/admin/kabales/$kabaleId_': typeof AdminKabalesKabaleIdRoute
+  '/admin/kabales/create': typeof AdminKabalesCreateRoute
+  '/admin/users/$userId_': typeof AdminUsersUserIdRoute
+  '/admin/users/create': typeof AdminUsersCreateRoute
+  '/admin/applications/': typeof AdminApplicationsIndexRoute
+  '/admin/citizens/': typeof AdminCitizensIndexRoute
+  '/admin/digital-ids/': typeof AdminDigitalIdsIndexRoute
+  '/admin/kabales/': typeof AdminKabalesIndexRoute
+  '/admin/users/': typeof AdminUsersIndexRoute
+  '/admin/kabales/$kabaleId/edit': typeof AdminKabalesKabaleIdEditRoute
+  '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/kabale'
     | '/forbidden'
     | '/login'
     | '/profile'
     | '/register'
     | '/register-profile'
-    | '/admin/kabale'
-    | '/admin/system'
     | '/citizen/applications'
+    | '/kabale/applications'
+    | '/kabale/digital-ids'
+    | '/admin/'
     | '/citizen'
-    | '/admin/kabale/applications'
-    | '/admin/kabale/digital-ids'
-    | '/admin/kabale/'
-    | '/admin/system/'
-    | '/admin/system/citizens/$citizenId'
-    | '/admin/system/kabales/$kabaleId'
-    | '/admin/system/kabales/create'
-    | '/admin/system/users/$userId'
-    | '/admin/system/users/create'
-    | '/admin/system/applications'
-    | '/admin/system/citizens'
-    | '/admin/system/digital-ids'
-    | '/admin/system/kabales'
-    | '/admin/system/users'
-    | '/admin/system/kabales/$kabaleId/edit'
-    | '/admin/system/users/$userId/edit'
+    | '/kabale/'
+    | '/admin/citizens/$citizenId'
+    | '/admin/kabales/$kabaleId'
+    | '/admin/kabales/create'
+    | '/admin/users/$userId'
+    | '/admin/users/create'
+    | '/admin/applications'
+    | '/admin/citizens'
+    | '/admin/digital-ids'
+    | '/admin/kabales'
+    | '/admin/users'
+    | '/admin/kabales/$kabaleId/edit'
+    | '/admin/users/$userId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -296,62 +289,62 @@ export interface FileRouteTypes {
     | '/register'
     | '/register-profile'
     | '/citizen/applications'
+    | '/kabale/applications'
+    | '/kabale/digital-ids'
+    | '/admin'
     | '/citizen'
-    | '/admin/kabale/applications'
-    | '/admin/kabale/digital-ids'
-    | '/admin/kabale'
-    | '/admin/system'
-    | '/admin/system/citizens/$citizenId'
-    | '/admin/system/kabales/$kabaleId'
-    | '/admin/system/kabales/create'
-    | '/admin/system/users/$userId'
-    | '/admin/system/users/create'
-    | '/admin/system/applications'
-    | '/admin/system/citizens'
-    | '/admin/system/digital-ids'
-    | '/admin/system/kabales'
-    | '/admin/system/users'
-    | '/admin/system/kabales/$kabaleId/edit'
-    | '/admin/system/users/$userId/edit'
+    | '/kabale'
+    | '/admin/citizens/$citizenId'
+    | '/admin/kabales/$kabaleId'
+    | '/admin/kabales/create'
+    | '/admin/users/$userId'
+    | '/admin/users/create'
+    | '/admin/applications'
+    | '/admin/citizens'
+    | '/admin/digital-ids'
+    | '/admin/kabales'
+    | '/admin/users'
+    | '/admin/kabales/$kabaleId/edit'
+    | '/admin/users/$userId/edit'
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/kabale'
     | '/forbidden'
     | '/login'
     | '/profile'
     | '/register'
     | '/register-profile'
-    | '/admin/kabale'
-    | '/admin/system'
     | '/citizen/applications'
+    | '/kabale/applications'
+    | '/kabale/digital-ids'
+    | '/admin/'
     | '/citizen/'
-    | '/admin/kabale/applications'
-    | '/admin/kabale/digital-ids'
-    | '/admin/kabale/'
-    | '/admin/system/'
-    | '/admin/system/citizens/$citizenId'
-    | '/admin/system/kabales/$kabaleId_'
-    | '/admin/system/kabales/create'
-    | '/admin/system/users/$userId_'
-    | '/admin/system/users/create'
-    | '/admin/system/applications/'
-    | '/admin/system/citizens/'
-    | '/admin/system/digital-ids/'
-    | '/admin/system/kabales/'
-    | '/admin/system/users/'
-    | '/admin/system/kabales/$kabaleId/edit'
-    | '/admin/system/users/$userId/edit'
+    | '/kabale/'
+    | '/admin/citizens/$citizenId'
+    | '/admin/kabales/$kabaleId_'
+    | '/admin/kabales/create'
+    | '/admin/users/$userId_'
+    | '/admin/users/create'
+    | '/admin/applications/'
+    | '/admin/citizens/'
+    | '/admin/digital-ids/'
+    | '/admin/kabales/'
+    | '/admin/users/'
+    | '/admin/kabales/$kabaleId/edit'
+    | '/admin/users/$userId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  KabaleRouteRoute: typeof KabaleRouteRouteWithChildren
   ForbiddenRoute: typeof ForbiddenRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
   RegisterProfileRoute: typeof RegisterProfileRoute
-  AdminKabaleRouteRoute: typeof AdminKabaleRouteRouteWithChildren
-  AdminSystemRouteRoute: typeof AdminSystemRouteRouteWithChildren
   CitizenApplicationsRoute: typeof CitizenApplicationsRoute
   CitizenIndexRoute: typeof CitizenIndexRoute
 }
@@ -393,12 +386,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForbiddenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kabale': {
+      id: '/kabale'
+      path: '/kabale'
+      fullPath: '/kabale'
+      preLoaderRoute: typeof KabaleRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/kabale/': {
+      id: '/kabale/'
+      path: '/'
+      fullPath: '/kabale/'
+      preLoaderRoute: typeof KabaleIndexRouteImport
+      parentRoute: typeof KabaleRouteRoute
     }
     '/citizen/': {
       id: '/citizen/'
@@ -407,6 +421,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CitizenIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/kabale/digital-ids': {
+      id: '/kabale/digital-ids'
+      path: '/digital-ids'
+      fullPath: '/kabale/digital-ids'
+      preLoaderRoute: typeof KabaleDigitalIdsRouteImport
+      parentRoute: typeof KabaleRouteRoute
+    }
+    '/kabale/applications': {
+      id: '/kabale/applications'
+      path: '/applications'
+      fullPath: '/kabale/applications'
+      preLoaderRoute: typeof KabaleApplicationsRouteImport
+      parentRoute: typeof KabaleRouteRoute
+    }
     '/citizen/applications': {
       id: '/citizen/applications'
       path: '/citizen/applications'
@@ -414,194 +449,154 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CitizenApplicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/system': {
-      id: '/admin/system'
-      path: '/admin/system'
-      fullPath: '/admin/system'
-      preLoaderRoute: typeof AdminSystemRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/kabale': {
-      id: '/admin/kabale'
-      path: '/admin/kabale'
-      fullPath: '/admin/kabale'
-      preLoaderRoute: typeof AdminKabaleRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/system/': {
-      id: '/admin/system/'
-      path: '/'
-      fullPath: '/admin/system/'
-      preLoaderRoute: typeof AdminSystemIndexRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
-    }
-    '/admin/kabale/': {
-      id: '/admin/kabale/'
-      path: '/'
-      fullPath: '/admin/kabale/'
-      preLoaderRoute: typeof AdminKabaleIndexRouteImport
-      parentRoute: typeof AdminKabaleRouteRoute
-    }
-    '/admin/kabale/digital-ids': {
-      id: '/admin/kabale/digital-ids'
-      path: '/digital-ids'
-      fullPath: '/admin/kabale/digital-ids'
-      preLoaderRoute: typeof AdminKabaleDigitalIdsRouteImport
-      parentRoute: typeof AdminKabaleRouteRoute
-    }
-    '/admin/kabale/applications': {
-      id: '/admin/kabale/applications'
-      path: '/applications'
-      fullPath: '/admin/kabale/applications'
-      preLoaderRoute: typeof AdminKabaleApplicationsRouteImport
-      parentRoute: typeof AdminKabaleRouteRoute
-    }
-    '/admin/system/users/': {
-      id: '/admin/system/users/'
+    '/admin/users/': {
+      id: '/admin/users/'
       path: '/users'
-      fullPath: '/admin/system/users'
-      preLoaderRoute: typeof AdminSystemUsersIndexRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/kabales/': {
-      id: '/admin/system/kabales/'
+    '/admin/kabales/': {
+      id: '/admin/kabales/'
       path: '/kabales'
-      fullPath: '/admin/system/kabales'
-      preLoaderRoute: typeof AdminSystemKabalesIndexRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/kabales'
+      preLoaderRoute: typeof AdminKabalesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/digital-ids/': {
-      id: '/admin/system/digital-ids/'
+    '/admin/digital-ids/': {
+      id: '/admin/digital-ids/'
       path: '/digital-ids'
-      fullPath: '/admin/system/digital-ids'
-      preLoaderRoute: typeof AdminSystemDigitalIdsIndexRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/digital-ids'
+      preLoaderRoute: typeof AdminDigitalIdsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/citizens/': {
-      id: '/admin/system/citizens/'
+    '/admin/citizens/': {
+      id: '/admin/citizens/'
       path: '/citizens'
-      fullPath: '/admin/system/citizens'
-      preLoaderRoute: typeof AdminSystemCitizensIndexRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/citizens'
+      preLoaderRoute: typeof AdminCitizensIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/applications/': {
-      id: '/admin/system/applications/'
+    '/admin/applications/': {
+      id: '/admin/applications/'
       path: '/applications'
-      fullPath: '/admin/system/applications'
-      preLoaderRoute: typeof AdminSystemApplicationsIndexRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/applications'
+      preLoaderRoute: typeof AdminApplicationsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/users/create': {
-      id: '/admin/system/users/create'
+    '/admin/users/create': {
+      id: '/admin/users/create'
       path: '/users/create'
-      fullPath: '/admin/system/users/create'
-      preLoaderRoute: typeof AdminSystemUsersCreateRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/users/create'
+      preLoaderRoute: typeof AdminUsersCreateRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/users/$userId_': {
-      id: '/admin/system/users/$userId_'
+    '/admin/users/$userId_': {
+      id: '/admin/users/$userId_'
       path: '/users/$userId'
-      fullPath: '/admin/system/users/$userId'
-      preLoaderRoute: typeof AdminSystemUsersUserIdRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/users/$userId'
+      preLoaderRoute: typeof AdminUsersUserIdRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/kabales/create': {
-      id: '/admin/system/kabales/create'
+    '/admin/kabales/create': {
+      id: '/admin/kabales/create'
       path: '/kabales/create'
-      fullPath: '/admin/system/kabales/create'
-      preLoaderRoute: typeof AdminSystemKabalesCreateRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/kabales/create'
+      preLoaderRoute: typeof AdminKabalesCreateRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/kabales/$kabaleId_': {
-      id: '/admin/system/kabales/$kabaleId_'
+    '/admin/kabales/$kabaleId_': {
+      id: '/admin/kabales/$kabaleId_'
       path: '/kabales/$kabaleId'
-      fullPath: '/admin/system/kabales/$kabaleId'
-      preLoaderRoute: typeof AdminSystemKabalesKabaleIdRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/kabales/$kabaleId'
+      preLoaderRoute: typeof AdminKabalesKabaleIdRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/citizens/$citizenId': {
-      id: '/admin/system/citizens/$citizenId'
+    '/admin/citizens/$citizenId': {
+      id: '/admin/citizens/$citizenId'
       path: '/citizens/$citizenId'
-      fullPath: '/admin/system/citizens/$citizenId'
-      preLoaderRoute: typeof AdminSystemCitizensCitizenIdRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/citizens/$citizenId'
+      preLoaderRoute: typeof AdminCitizensCitizenIdRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/users/$userId/edit': {
-      id: '/admin/system/users/$userId/edit'
+    '/admin/users/$userId/edit': {
+      id: '/admin/users/$userId/edit'
       path: '/users/$userId/edit'
-      fullPath: '/admin/system/users/$userId/edit'
-      preLoaderRoute: typeof AdminSystemUsersUserIdEditRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/users/$userId/edit'
+      preLoaderRoute: typeof AdminUsersUserIdEditRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
-    '/admin/system/kabales/$kabaleId/edit': {
-      id: '/admin/system/kabales/$kabaleId/edit'
+    '/admin/kabales/$kabaleId/edit': {
+      id: '/admin/kabales/$kabaleId/edit'
       path: '/kabales/$kabaleId/edit'
-      fullPath: '/admin/system/kabales/$kabaleId/edit'
-      preLoaderRoute: typeof AdminSystemKabalesKabaleIdEditRouteImport
-      parentRoute: typeof AdminSystemRouteRoute
+      fullPath: '/admin/kabales/$kabaleId/edit'
+      preLoaderRoute: typeof AdminKabalesKabaleIdEditRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
   }
 }
 
-interface AdminKabaleRouteRouteChildren {
-  AdminKabaleApplicationsRoute: typeof AdminKabaleApplicationsRoute
-  AdminKabaleDigitalIdsRoute: typeof AdminKabaleDigitalIdsRoute
-  AdminKabaleIndexRoute: typeof AdminKabaleIndexRoute
+interface AdminRouteRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminCitizensCitizenIdRoute: typeof AdminCitizensCitizenIdRoute
+  AdminKabalesKabaleIdRoute: typeof AdminKabalesKabaleIdRoute
+  AdminKabalesCreateRoute: typeof AdminKabalesCreateRoute
+  AdminUsersUserIdRoute: typeof AdminUsersUserIdRoute
+  AdminUsersCreateRoute: typeof AdminUsersCreateRoute
+  AdminApplicationsIndexRoute: typeof AdminApplicationsIndexRoute
+  AdminCitizensIndexRoute: typeof AdminCitizensIndexRoute
+  AdminDigitalIdsIndexRoute: typeof AdminDigitalIdsIndexRoute
+  AdminKabalesIndexRoute: typeof AdminKabalesIndexRoute
+  AdminUsersIndexRoute: typeof AdminUsersIndexRoute
+  AdminKabalesKabaleIdEditRoute: typeof AdminKabalesKabaleIdEditRoute
+  AdminUsersUserIdEditRoute: typeof AdminUsersUserIdEditRoute
 }
 
-const AdminKabaleRouteRouteChildren: AdminKabaleRouteRouteChildren = {
-  AdminKabaleApplicationsRoute: AdminKabaleApplicationsRoute,
-  AdminKabaleDigitalIdsRoute: AdminKabaleDigitalIdsRoute,
-  AdminKabaleIndexRoute: AdminKabaleIndexRoute,
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+  AdminCitizensCitizenIdRoute: AdminCitizensCitizenIdRoute,
+  AdminKabalesKabaleIdRoute: AdminKabalesKabaleIdRoute,
+  AdminKabalesCreateRoute: AdminKabalesCreateRoute,
+  AdminUsersUserIdRoute: AdminUsersUserIdRoute,
+  AdminUsersCreateRoute: AdminUsersCreateRoute,
+  AdminApplicationsIndexRoute: AdminApplicationsIndexRoute,
+  AdminCitizensIndexRoute: AdminCitizensIndexRoute,
+  AdminDigitalIdsIndexRoute: AdminDigitalIdsIndexRoute,
+  AdminKabalesIndexRoute: AdminKabalesIndexRoute,
+  AdminUsersIndexRoute: AdminUsersIndexRoute,
+  AdminKabalesKabaleIdEditRoute: AdminKabalesKabaleIdEditRoute,
+  AdminUsersUserIdEditRoute: AdminUsersUserIdEditRoute,
 }
 
-const AdminKabaleRouteRouteWithChildren =
-  AdminKabaleRouteRoute._addFileChildren(AdminKabaleRouteRouteChildren)
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
 
-interface AdminSystemRouteRouteChildren {
-  AdminSystemIndexRoute: typeof AdminSystemIndexRoute
-  AdminSystemCitizensCitizenIdRoute: typeof AdminSystemCitizensCitizenIdRoute
-  AdminSystemKabalesKabaleIdRoute: typeof AdminSystemKabalesKabaleIdRoute
-  AdminSystemKabalesCreateRoute: typeof AdminSystemKabalesCreateRoute
-  AdminSystemUsersUserIdRoute: typeof AdminSystemUsersUserIdRoute
-  AdminSystemUsersCreateRoute: typeof AdminSystemUsersCreateRoute
-  AdminSystemApplicationsIndexRoute: typeof AdminSystemApplicationsIndexRoute
-  AdminSystemCitizensIndexRoute: typeof AdminSystemCitizensIndexRoute
-  AdminSystemDigitalIdsIndexRoute: typeof AdminSystemDigitalIdsIndexRoute
-  AdminSystemKabalesIndexRoute: typeof AdminSystemKabalesIndexRoute
-  AdminSystemUsersIndexRoute: typeof AdminSystemUsersIndexRoute
-  AdminSystemKabalesKabaleIdEditRoute: typeof AdminSystemKabalesKabaleIdEditRoute
-  AdminSystemUsersUserIdEditRoute: typeof AdminSystemUsersUserIdEditRoute
+interface KabaleRouteRouteChildren {
+  KabaleApplicationsRoute: typeof KabaleApplicationsRoute
+  KabaleDigitalIdsRoute: typeof KabaleDigitalIdsRoute
+  KabaleIndexRoute: typeof KabaleIndexRoute
 }
 
-const AdminSystemRouteRouteChildren: AdminSystemRouteRouteChildren = {
-  AdminSystemIndexRoute: AdminSystemIndexRoute,
-  AdminSystemCitizensCitizenIdRoute: AdminSystemCitizensCitizenIdRoute,
-  AdminSystemKabalesKabaleIdRoute: AdminSystemKabalesKabaleIdRoute,
-  AdminSystemKabalesCreateRoute: AdminSystemKabalesCreateRoute,
-  AdminSystemUsersUserIdRoute: AdminSystemUsersUserIdRoute,
-  AdminSystemUsersCreateRoute: AdminSystemUsersCreateRoute,
-  AdminSystemApplicationsIndexRoute: AdminSystemApplicationsIndexRoute,
-  AdminSystemCitizensIndexRoute: AdminSystemCitizensIndexRoute,
-  AdminSystemDigitalIdsIndexRoute: AdminSystemDigitalIdsIndexRoute,
-  AdminSystemKabalesIndexRoute: AdminSystemKabalesIndexRoute,
-  AdminSystemUsersIndexRoute: AdminSystemUsersIndexRoute,
-  AdminSystemKabalesKabaleIdEditRoute: AdminSystemKabalesKabaleIdEditRoute,
-  AdminSystemUsersUserIdEditRoute: AdminSystemUsersUserIdEditRoute,
+const KabaleRouteRouteChildren: KabaleRouteRouteChildren = {
+  KabaleApplicationsRoute: KabaleApplicationsRoute,
+  KabaleDigitalIdsRoute: KabaleDigitalIdsRoute,
+  KabaleIndexRoute: KabaleIndexRoute,
 }
 
-const AdminSystemRouteRouteWithChildren =
-  AdminSystemRouteRoute._addFileChildren(AdminSystemRouteRouteChildren)
+const KabaleRouteRouteWithChildren = KabaleRouteRoute._addFileChildren(
+  KabaleRouteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
+  KabaleRouteRoute: KabaleRouteRouteWithChildren,
   ForbiddenRoute: ForbiddenRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
   RegisterProfileRoute: RegisterProfileRoute,
-  AdminKabaleRouteRoute: AdminKabaleRouteRouteWithChildren,
-  AdminSystemRouteRoute: AdminSystemRouteRouteWithChildren,
   CitizenApplicationsRoute: CitizenApplicationsRoute,
   CitizenIndexRoute: CitizenIndexRoute,
 }

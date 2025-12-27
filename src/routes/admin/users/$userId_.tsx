@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getUserByIdFn } from '@/server/system';
 
-export const Route = createFileRoute('/admin/system/users/$userId_')({
+export const Route = createFileRoute('/admin/users/$userId_')({
   loader: async ({ params }) => {
     const result = await getUserByIdFn({ data: { userId: params.userId } });
     if (!result.success) {
@@ -38,7 +38,7 @@ function UserDetailsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/admin/system/users">
+          <Link to="/admin/users">
             <Button variant="ghost" size="icon">
               <ArrowLeftIcon className="size-4" />
             </Button>
@@ -50,7 +50,7 @@ function UserDetailsPage() {
             <p className="text-muted-foreground mt-2">User Details</p>
           </div>
         </div>
-        <Link to="/admin/system/users/$userId/edit" params={{ userId: user.id }}>
+        <Link to="/admin/users/$userId/edit" params={{ userId: user.id }}>
           <Button>
             <EditIcon className="size-4" />
             Edit User
@@ -119,9 +119,6 @@ function UserDetailsPage() {
                 <div className="text-lg font-medium">
                   {user.kabaleAdminProfile.kabale.name}
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  Code: {user.kabaleAdminProfile.kabale.code}
-                </div>
               </div>
               {user.kabaleAdminProfile.kabale.address && (
                 <>
@@ -130,17 +127,6 @@ function UserDetailsPage() {
                     <div className="text-sm text-muted-foreground">Address</div>
                     <div className="text-lg">
                       {user.kabaleAdminProfile.kabale.address}
-                    </div>
-                  </div>
-                </>
-              )}
-              {user.kabaleAdminProfile.phone && (
-                <>
-                  <Separator />
-                  <div>
-                    <div className="text-sm text-muted-foreground">Profile Phone</div>
-                    <div className="text-lg">
-                      {user.kabaleAdminProfile.phone}
                     </div>
                   </div>
                 </>

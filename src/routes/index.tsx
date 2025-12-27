@@ -12,10 +12,10 @@ export const Route = createFileRoute('/')({
     // Redirect logged-in users to their role-specific dashboards
     if (user) {
       if (user.role === 'SYSTEM_ADMIN') {
-        throw redirect({ to: '/admin/system' });
+        throw redirect({ to: '/admin' });
       }
       if (user.role === 'KABALE_ADMIN') {
-        throw redirect({ to: '/admin/kabale' });
+        throw redirect({ to: '/kabale' });
       }
       if (user.role === 'CITIZEN') {
         // Check if citizen has a profile

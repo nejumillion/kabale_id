@@ -64,7 +64,7 @@ const createUserSchema = z
 
 type CreateUserFormValues = z.infer<typeof createUserSchema>;
 
-export const Route = createFileRoute('/admin/system/users/create')({
+export const Route = createFileRoute('/admin/users/create')({
   loader: async () => {
     const kabalesResult = await getAvailableKabalesFn();
     return { kabales: kabalesResult.kabales };
@@ -102,7 +102,7 @@ function CreateUserPage() {
       const result = await createUserFunction({ data });
 
       if (result.success && result.user) {
-        navigate({ to: '/admin/system/users/$userId', params: { userId: result.user.id } });
+        navigate({ to: '/admin/users/$userId', params: { userId: result.user.id } });
       } else {
         setError(result.error || 'Failed to create user');
       }
@@ -117,7 +117,7 @@ function CreateUserPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link to="/admin/system/users">
+        <Link to="/admin/users">
           <Button variant="ghost" size="icon">
             <ArrowLeftIcon className="size-4" />
           </Button>
@@ -286,7 +286,7 @@ function CreateUserPage() {
                         <SelectContent>
                           {kabales.map((kabale) => (
                             <SelectItem key={kabale.id} value={kabale.id}>
-                              {kabale.name} ({kabale.code})
+                                {kabale.name} ({kabale.address})
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -301,7 +301,7 @@ function CreateUserPage() {
                 <Button type="submit" disabled={isLoading}>
                   {isLoading ? 'Creating...' : 'Create User'}
                 </Button>
-                <Link to="/admin/system/users">
+                <Link to="/admin/users">
                   <Button type="button" variant="outline">
                     Cancel
                   </Button>

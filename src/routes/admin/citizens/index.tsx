@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { getAllCitizensFn } from '@/server/system';
 
-export const Route = createFileRoute('/admin/system/citizens/')({
+export const Route = createFileRoute('/admin/citizens/')({
   loader: async () => {
     const result = await getAllCitizensFn();
     return { citizens: result.citizens };
@@ -72,7 +72,7 @@ function CitizensListPage() {
                     <TableCell>{citizen._count.idApplications}</TableCell>
                     <TableCell>{citizen._count.digitalIds}</TableCell>
                     <TableCell className="text-right">
-                      <Link to="/admin/system/citizens/$citizenId" params={{ citizenId: citizen.id }}>
+                      <Link to="/admin/citizens/$citizenId" params={{ citizenId: citizen.id }}>
                         <Button variant="ghost" size="sm">
                           View
                         </Button>

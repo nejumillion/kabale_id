@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import { requireKabaleAdmin } from '@/server/auth-context';
 
-export const Route = createFileRoute('/admin/kabale')({
+export const Route = createFileRoute('/kabale')({
   beforeLoad: async () => {
     await requireKabaleAdmin();
   },
@@ -12,21 +12,21 @@ function KabaleAdminLayout() {
   return (
     <div className="min-h-screen bg-background">
       <nav className="border-b">
-        <div className="w-full px-6 flex items-center justify-start gap-4 py-2">
+          <div className=" w-full max-w-7xl mx-auto px-6 flex items-center justify-start gap-4 py-2">
           <Link
-            to="/admin/kabale"
+            to="/kabale"
             className="text-sm font-medium text-muted-foreground hover:text-foreground"
           >
             Dashboard
           </Link>
           <Link
-            to="/admin/kabale/applications"
+            to="/kabale/applications"
             className="text-sm font-medium text-muted-foreground hover:text-foreground"
           >
             Applications
           </Link>
           <Link
-            to="/admin/kabale/digital-ids"
+            to="/kabale/digital-ids"
             className="text-sm font-medium text-muted-foreground hover:text-foreground"
           >
             Digital IDs

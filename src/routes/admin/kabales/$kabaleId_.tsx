@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getKabaleByIdFn } from '@/server/kabales';
 
-export const Route = createFileRoute('/admin/system/kabales/$kabaleId_')({
+export const Route = createFileRoute('/admin/kabales/$kabaleId_')({
   loader: async ({ params }) => {
     const result = await getKabaleByIdFn({ data: { kabaleId: params.kabaleId } });
     if (!result.success) {
@@ -24,7 +24,7 @@ function KabaleDetailsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/admin/system/kabales">
+            <Link to="/admin/kabales">
             <Button variant="ghost" size="icon">
               <ArrowLeftIcon className="size-4" />
             </Button>
@@ -35,7 +35,7 @@ function KabaleDetailsPage() {
           </div>
         </div>
         <Link
-          to="/admin/system/kabales/$kabaleId/edit"
+          to="/admin/kabales/$kabaleId/edit"
           params={{ kabaleId: kabale.id }}
         >
           <Button>
@@ -58,40 +58,9 @@ function KabaleDetailsPage() {
             </div>
             <Separator />
             <div>
-              <div className="text-sm text-muted-foreground">Code</div>
-              <div className="text-lg">
-                <code className="text-sm bg-muted px-2 py-1 rounded">
-                  {kabale.code}
-                </code>
-              </div>
+              <div className="text-sm text-muted-foreground">Address</div>
+              <div className="text-lg">{kabale.address}</div>
             </div>
-            {kabale.address && (
-              <>
-                <Separator />
-                <div>
-                  <div className="text-sm text-muted-foreground">Address</div>
-                  <div className="text-lg">{kabale.address}</div>
-                </div>
-              </>
-            )}
-            {kabale.phone && (
-              <>
-                <Separator />
-                <div>
-                  <div className="text-sm text-muted-foreground">Phone</div>
-                  <div className="text-lg">{kabale.phone}</div>
-                </div>
-              </>
-            )}
-            {kabale.email && (
-              <>
-                <Separator />
-                <div>
-                  <div className="text-sm text-muted-foreground">Email</div>
-                  <div className="text-lg">{kabale.email}</div>
-                </div>
-              </>
-            )}
             <Separator />
             <div>
               <div className="text-sm text-muted-foreground">Created</div>
@@ -152,7 +121,7 @@ function KabaleDetailsPage() {
                   <TableRow key={admin.id}>
                     <TableCell className="font-medium">
                       <Link
-                        to="/admin/system/users/$userId"
+                        to="/admin/users/$userId"
                         params={{ userId: admin.userId }}
                         className="text-primary hover:underline"
                       >

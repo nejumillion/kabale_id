@@ -101,7 +101,7 @@ export const getAllUsersFn = createServerFn({ method: 'GET' })
               select: {
                 id: true,
                 name: true,
-                code: true,
+                address: true,
               },
             },
           },
@@ -138,10 +138,7 @@ export const getUserByIdFn = createServerFn({ method: 'GET' })
               select: {
                 id: true,
                 name: true,
-                code: true,
                 address: true,
-                phone: true,
-                email: true,
               },
             },
           },
@@ -304,7 +301,7 @@ export const createUserFn = createServerFn({ method: 'POST' })
               select: {
                 id: true,
                 name: true,
-                code: true,
+                address: true,
               },
             },
           },
@@ -335,7 +332,7 @@ export const createUserFn = createServerFn({ method: 'POST' })
               select: {
                 id: true,
                 name: true,
-                code: true,
+                address: true,
               },
             },
           },
@@ -507,7 +504,7 @@ export const updateUserFn = createServerFn({ method: 'POST' })
               select: {
                 id: true,
                 name: true,
-                code: true,
+                address: true,
               },
             },
           },
@@ -584,7 +581,7 @@ export const getCitizenByIdFn = createServerFn({ method: 'GET' })
               select: {
                 id: true,
                 name: true,
-                code: true,
+                address: true,
               },
             },
             digitalId: {
@@ -609,9 +606,9 @@ export const getCitizenByIdFn = createServerFn({ method: 'GET' })
                 kabale: {
                   select: {
                     id: true,
-                    name: true,
-                    code: true,
-                  },
+                    name: true, 
+                    address: true,
+                    },
                 },
               },
             },
@@ -667,7 +664,7 @@ export const getAllDigitalIdsFn = createServerFn({ method: 'GET' })
               select: {
                 id: true,
                 name: true,
-                code: true,
+                address: true,
               },
             },
           },
@@ -720,7 +717,7 @@ export const getAllDigitalIdsFn = createServerFn({ method: 'GET' })
               select: {
                 id: true,
                 name: true,
-                code: true,
+                  address: true,
               },
             },
           },
@@ -759,7 +756,7 @@ export const getAllApplicationsFn = createServerFn({ method: 'GET' })
           select: {
             id: true,
             name: true,
-            code: true,
+            address: true,
           },
         },
         digitalId: true,

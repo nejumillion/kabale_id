@@ -87,7 +87,7 @@ function CitizenApplicationsPage() {
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 	const [editingApplication, setEditingApplication] = useState<string | null>(null)
 	const [submittingApplication, setSubmittingApplication] = useState<string | null>(null)
-	const [kabales, setKabales] = useState<Array<{ id: string; name: string; code: string; address: string | null; phone: string | null }>>([])
+			const [kabales, setKabales] = useState<Array<{ id: string; name: string; address: string | null }>>([])
 	const [loadingKabales, setLoadingKabales] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 	const [success, setSuccess] = useState<string | null>(null)
@@ -284,7 +284,7 @@ function CitizenApplicationsPage() {
 												<SelectContent>
 													{kabales.map((kabale) => (
 														<SelectItem key={kabale.id} value={kabale.id}>
-															{kabale.name} ({kabale.code})
+															{kabale.name} ({kabale.address})
 														</SelectItem>
 													))}
 												</SelectContent>
@@ -305,12 +305,7 @@ function CitizenApplicationsPage() {
 													<span className="text-muted-foreground">{selectedKabale.address}</span>
 												</div>
 											)}
-											{selectedKabale.phone && (
-												<div className="flex items-start gap-2">
-													<Phone className="h-4 w-4 text-muted-foreground mt-0.5" />
-													<span className="text-muted-foreground">{selectedKabale.phone}</span>
-												</div>
-											)}
+											
 										</CardContent>
 									</Card>
 								)}
@@ -377,7 +372,7 @@ function CitizenApplicationsPage() {
 											{application.kabale.name}
 										</CardTitle>
 										<CardDescription className="text-xs">
-											Code: {application.kabale.code}
+											Address: {application.kabale.address}
 										</CardDescription>
 									</div>
 									{getStatusBadge(application.status)}
@@ -415,12 +410,6 @@ function CitizenApplicationsPage() {
 											<MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
 											<span className="text-muted-foreground">{application.kabale.address}</span>
 										</div>
-										{application.kabale.phone && (
-											<div className="flex items-start gap-2 text-sm">
-												<Phone className="h-4 w-4 text-muted-foreground mt-0.5" />
-												<span className="text-muted-foreground">{application.kabale.phone}</span>
-											</div>
-										)}
 									</div>
 								)}
 
@@ -522,7 +511,7 @@ function CitizenApplicationsPage() {
 																		<SelectContent>
 																			{kabales.map((kabale) => (
 																				<SelectItem key={kabale.id} value={kabale.id}>
-																					{kabale.name} ({kabale.code})
+																							{kabale.name} ({kabale.address})
 																				</SelectItem>
 																			))}
 																		</SelectContent>
@@ -541,12 +530,6 @@ function CitizenApplicationsPage() {
 																		<div className="flex items-start gap-2">
 																			<MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
 																			<span className="text-muted-foreground">{selectedKabale.address}</span>
-																		</div>
-																	)}
-																	{selectedKabale.phone && (
-																		<div className="flex items-start gap-2">
-																			<Phone className="h-4 w-4 text-muted-foreground mt-0.5" />
-																			<span className="text-muted-foreground">{selectedKabale.phone}</span>
 																		</div>
 																	)}
 																</CardContent>

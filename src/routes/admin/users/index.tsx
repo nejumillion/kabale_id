@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/table';
 import { getAllUsersFn } from '@/server/system';
 
-export const Route = createFileRoute('/admin/system/users/')({
+export const Route = createFileRoute('/admin/users/')({
   loader: async () => {
     const result = await getAllUsersFn();
     return { users: result.users };
@@ -46,7 +46,7 @@ function UsersListPage() {
             Manage all system users
           </p>
         </div>
-        <Link to="/admin/system/users/create">
+        <Link to="/admin/users/create">
           <Button>
             <PlusIcon className="size-4" />
             Create User
@@ -65,7 +65,7 @@ function UsersListPage() {
           {users.length === 0 ? (
             <div className="py-8 text-center text-muted-foreground">
               <p>No users found</p>
-              <Link to="/admin/system/users/create">
+              <Link to="/admin/users/create">
                 <Button variant="outline" className="mt-4">
                   Create First User
                 </Button>
@@ -100,7 +100,8 @@ function UsersListPage() {
                     <TableCell>
                       {user.kabaleAdminProfile?.kabale ? (
                         <Link
-                          to="/admin/system/kabales"
+                          to="/admin/kabales/$kabaleId"
+                          params={{ kabaleId: user.kabaleAdminProfile.kabale.id }}
                           className="text-primary hover:underline"
                         >
                           {user.kabaleAdminProfile.kabale.name}
@@ -113,7 +114,7 @@ function UsersListPage() {
                       {new Date(user.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Link to="/admin/system/users/$userId" params={{ userId: user.id }}>
+                      <Link to="/admin/users/$userId" params={{ userId: user.id }}>
                         <Button variant="ghost" size="sm">
                           View
                         </Button>

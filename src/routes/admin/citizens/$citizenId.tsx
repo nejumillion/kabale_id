@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getCitizenByIdFn } from '@/server/system';
 
-export const Route = createFileRoute('/admin/system/citizens/$citizenId')({
+export const Route = createFileRoute('/admin/citizens/$citizenId')({
   loader: async ({ params }) => {
     const result = await getCitizenByIdFn({ data: { citizenId: params.citizenId } });
     if (!result.success) {
@@ -39,7 +39,7 @@ function CitizenDetailsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link to="/admin/system/citizens">
+        <Link to="/admin/citizens">
           <Button variant="ghost" size="icon">
             <ArrowLeftIcon className="size-4" />
           </Button>
@@ -145,7 +145,7 @@ function CitizenDetailsPage() {
             <div>
               <div className="text-sm text-muted-foreground">View User Account</div>
               <div className="mt-2">
-                <Link to="/admin/system/users/$userId" params={{ userId: citizen.userId }}>
+                <Link to="/admin/users/$userId" params={{ userId: citizen.userId }}>
                   <Button variant="outline" size="sm">
                     View User
                   </Button>
@@ -200,7 +200,7 @@ function CitizenDetailsPage() {
                   <TableRow key={app.id}>
                     <TableCell>
                       <Link
-                        to="/admin/system/kabales/$kabaleId"
+                        to="/admin/kabales/$kabaleId"
                         params={{ kabaleId: app.kabale.id }}
                         className="text-primary hover:underline"
                       >
@@ -260,7 +260,7 @@ function CitizenDetailsPage() {
                   <TableRow key={digitalId.id}>
                     <TableCell>
                       <Link
-                        to="/admin/system/kabales/$kabaleId"
+                        to="/admin/kabales/$kabaleId"
                         params={{ kabaleId: digitalId.application.kabale.id }}
                         className="text-primary hover:underline"
                       >

@@ -125,11 +125,6 @@ function CitizenDashboardPage() {
 						<div className="text-sm font-medium">
 							{applications[0]?.kabale.name || 'Not assigned'}
 						</div>
-						{applications[0]?.kabale.code && (
-							<p className="text-xs text-muted-foreground">
-								Code: {applications[0].kabale.code}
-							</p>
-						)}
 					</CardContent>
 				</Card>
 			</div>
@@ -230,7 +225,7 @@ function CitizenDashboardPage() {
 												{application.kabale.name}
 											</CardTitle>
 											<CardDescription className="text-xs">
-												Code: {application.kabale.code}
+												Address: {application.kabale.address}
 											</CardDescription>
 										</div>
 										{getStatusBadge(application.status)}

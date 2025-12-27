@@ -72,7 +72,7 @@ function ProfilePage() {
 	const [error, setError] = useState<string | null>(null)
 	const [isLoading, setIsLoading] = useState(false)
 	const [kabales, setKabales] = useState<
-		Array<{ id: string; name: string; code: string }>
+		Array<{ id: string; name: string; address: string | null }>
 	>([])
 	const [loadingKabales, setLoadingKabales] = useState(true)
 	const createCitizenProfileMutation = useServerFn(createCitizenProfileFn);
@@ -225,7 +225,7 @@ function ProfilePage() {
 											<SelectContent>
 												{kabales.map((kabale) => (
 													<SelectItem key={kabale.id} value={kabale.id}>
-														{kabale.name} ({kabale.code})
+														{kabale.name} ({kabale.address})
 													</SelectItem>
 												))}
 											</SelectContent>
