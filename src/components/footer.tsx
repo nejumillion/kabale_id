@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-muted-foreground" />
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} Kabale Digital ID System. All rights reserved.
+            © {new Date().getFullYear()} Residential ID Card System. All rights reserved.
           </p>
         </div>
         <p className="text-muted-foreground text-sm">Official City Authority Digital Identity Platform</p>

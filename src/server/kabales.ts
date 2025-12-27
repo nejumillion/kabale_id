@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { prisma } from '@/db';
 import { requireKabaleAdmin, requireKabaleAdminMiddleware, requireSystemAdmin, requireSystemAdminMiddleware } from './auth-context';
 import { getKabaleScopeFilter, requireKabaleAccess } from './rbac';
+import { getIdDesignConfigFn } from './system';
 
 /**
  * Get all Kabales (System Admin only)
@@ -48,6 +49,9 @@ export const getKabaleByIdFn = createServerFn({ method: 'GET' })
               select: {
                 email: true,
                 phone: true,
+                firstName: true,
+                lastName: true,
+                id: true,
               },
             },
           },
@@ -350,6 +354,207 @@ export const getKabaleAdminDashboardFn = createServerFn({
   });
 
 /**
+ * Get citizens for the current Kabale Admin's Kabale
+ * Returns unique citizens who have at least one application to this Kabale
+ * Kabale Admin only - automatically scoped to their Kabale
+ */
+export const getKabaleAdminCitizensFn = createServerFn({
+  method: 'GET',
+})
+  .middleware([requireKabaleAdminMiddleware])
+  .handler(async () => {
+    const user = await requireKabaleAdmin();
+
+    if (!user.kabaleAdminProfile) {
+      return {
+        success: false,
+        error: 'Kabale admin profile not found',
+      };
+    }
+
+    const kabaleId = user.kabaleAdminProfile.kabaleId;
+
+    // Get unique citizen IDs who have applications to this Kabale
+    const applications = await prisma.idApplication.findMany({
+      where: { kabaleId },
+      select: {
+        citizenId: true,
+      },
+      distinct: ['citizenId'],
+    });
+
+    const citizenIds = applications.map((app) => app.citizenId);
+
+    if (citizenIds.length === 0) {
+      return {
+        success: true,
+        citizens: [],
+      };
+    }
+
+    // Get citizens with counts scoped to this kabale
+    const citizens = await prisma.citizenProfile.findMany({
+      where: {
+        id: { in: citizenIds },
+      },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            phone: true,
+            firstName: true,
+            lastName: true,
+            createdAt: true,
+          },
+        },
+        _count: {
+          select: {
+            idApplications: {
+              where: { kabaleId },
+            },
+            digitalIds: {
+              where: {
+                application: { kabaleId },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      citizens,
+    };
+  });
+
+/**
+ * Get a single citizen by ID for Kabale Admin
+ * Only accessible if the citizen has applications to the admin's Kabale
+ * Kabale Admin only - automatically scoped to their Kabale
+ */
+export const getKabaleAdminCitizenByIdFn = createServerFn({
+  method: 'GET',
+})
+  .inputValidator(z.object({ citizenId: z.string() }))
+  .middleware([requireKabaleAdminMiddleware])
+  .handler(async ({ data }) => {
+    const user = await requireKabaleAdmin();
+
+    if (!user.kabaleAdminProfile) {
+      return {
+        success: false,
+        error: 'Kabale admin profile not found',
+      };
+    }
+
+    const kabaleId = user.kabaleAdminProfile.kabaleId;
+
+    // First verify the citizen has at least one application to this Kabale
+    const hasAccess = await prisma.idApplication.findFirst({
+      where: {
+        citizenId: data.citizenId,
+        kabaleId,
+      },
+    });
+
+    if (!hasAccess) {
+      return {
+        success: false,
+        error: 'Citizen not found or not accessible',
+      };
+    }
+
+    // Get citizen with applications and digital IDs filtered to this kabale
+    const citizen = await prisma.citizenProfile.findUnique({
+      where: { id: data.citizenId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            phone: true,
+            firstName: true,
+            lastName: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        idApplications: {
+          where: { kabaleId },
+          orderBy: { createdAt: 'desc' },
+          include: {
+            kabale: {
+              select: {
+                id: true,
+                name: true,
+                address: true,
+              },
+            },
+            digitalId: {
+              select: {
+                id: true,
+                status: true,
+                issuedAt: true,
+              },
+            },
+            _count: {
+              select: {
+                verificationLogs: true,
+              },
+            },
+          },
+        },
+        digitalIds: {
+          where: {
+            application: { kabaleId },
+          },
+          orderBy: { issuedAt: 'desc' },
+          include: {
+            application: {
+              include: {
+                kabale: {
+                  select: {
+                    id: true,
+                    name: true,
+                    address: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            idApplications: {
+              where: { kabaleId },
+            },
+            digitalIds: {
+              where: {
+                application: { kabaleId },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!citizen) {
+      return {
+        success: false,
+        error: 'Citizen not found',
+      };
+    }
+
+    return {
+      success: true,
+      citizen,
+    };
+  });
+
+/**
  * Get all available Kabales for selection
  * Public endpoint - no authentication required
  * Used in registration/profile creation forms
@@ -564,11 +769,27 @@ export const reviewApplicationFn = createServerFn({ method: 'POST' })
             throw new Error('Citizen already has an active Digital ID');
           }
 
+          // Get design config to calculate expiry date
+          const designConfigResult = await getIdDesignConfigFn();
+          const expiryDurationYears = designConfigResult.success && designConfigResult.config.expiryDurationYears
+            ? designConfigResult.config.expiryDurationYears
+            : 3; // Default to 3 years if config not available
+
+          // Calculate expiry date: issuedAt + expiryDurationYears
+          const issuedAt = new Date();
+          const expiresAt = new Date(
+            issuedAt.getFullYear() + expiryDurationYears,
+            issuedAt.getMonth(),
+            issuedAt.getDate()
+          );
+
           await tx.digitalId.create({
             data: {
               applicationId: data.applicationId,
               citizenId: application.citizenId,
               status: 'ACTIVE',
+              issuedAt,
+              expiresAt,
             },
           });
         }

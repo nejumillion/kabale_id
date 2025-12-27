@@ -184,3 +184,13 @@ model Session {
   @@index([userId])
   @@index([expiresAt])
 }
+
+model IdDesignConfig {
+  id        String   @id @default(cuid())
+  config    Json     // Stores design configuration as JSON
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([isActive])
+}

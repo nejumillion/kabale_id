@@ -1,16 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeft, User, Mail, Phone, Calendar, MapPin, Shield, Building2, FileText, CreditCard, Activity, ExternalLink } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, Calendar, MapPin, Shield, FileText, CreditCard, Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getCitizenByIdFn } from '@/server/system';
+import { getKabaleAdminCitizenByIdFn } from '@/server/kabales';
 
-export const Route = createFileRoute('/admin/citizens/$citizenId')({
+export const Route = createFileRoute('/kabale/citizens/$citizenId')({
   loader: async ({ params }) => {
-    const result = await getCitizenByIdFn({ data: { citizenId: params.citizenId } });
+    const result = await getKabaleAdminCitizenByIdFn({ data: { citizenId: params.citizenId } });
     if (!result.success) {
-      throw new Response('Citizen not found', { status: 404 });
+      throw new Response(result.error || 'Citizen not found', { status: 404 });
     }
     return { citizen: result.citizen };
   },
@@ -40,7 +40,7 @@ function CitizenDetailsPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/admin/citizens">
+          <Link to="/kabale/citizens">
             <Button variant="outline" size="icon">
               <ArrowLeft className="h-4 w-4" />
             </Button>
@@ -60,12 +60,6 @@ function CitizenDetailsPage() {
             </div>
           </div>
         </div>
-        <Link to="/admin/users/$userId" params={{ userId: citizen.userId }}>
-          <Button variant="outline" className="group">
-            <ExternalLink className="h-4 w-4 mr-2 transition-transform group-hover:scale-110" />
-            View User Account
-          </Button>
-        </Link>
       </div>
 
       {/* Main Content Grid */}
@@ -201,14 +195,14 @@ function CitizenDetailsPage() {
                   <div className="rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 p-6 border-2 border-primary/20">
                     <div className="text-xs font-semibold uppercase tracking-wide text-primary mb-2 flex items-center gap-2">
                       <FileText className="h-3.5 w-3.5" />
-                      Total Applications
+                      Applications to This Kabale
                     </div>
                     <div className="text-3xl font-bold text-primary">{citizen._count.idApplications}</div>
                   </div>
                   <div className="rounded-lg bg-gradient-to-br from-secondary/10 to-secondary/5 p-6 border-2 border-secondary/20">
                     <div className="text-xs font-semibold uppercase tracking-wide text-secondary-foreground mb-2 flex items-center gap-2">
                       <CreditCard className="h-3.5 w-3.5" />
-                      Digital IDs Issued
+                      Digital IDs from This Kabale
                     </div>
                     <div className="text-3xl font-bold text-secondary-foreground">{citizen._count.digitalIds}</div>
                   </div>
@@ -234,7 +228,7 @@ function CitizenDetailsPage() {
                   ID Applications
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  {citizen.idApplications.length} total
+                  {citizen.idApplications.length} application{citizen.idApplications.length !== 1 ? 's' : ''} to this Kabale
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -242,24 +236,15 @@ function CitizenDetailsPage() {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-muted/50">
-                        <TableHead className="font-semibold text-xs">Kabale</TableHead>
                         <TableHead className="font-semibold text-xs">Status</TableHead>
                         <TableHead className="font-semibold text-xs">Submitted</TableHead>
                         <TableHead className="font-semibold text-xs">Digital ID</TableHead>
+                        <TableHead className="font-semibold text-xs">Verifications</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {citizen.idApplications.map((app) => (
                         <TableRow key={app.id} className="hover:bg-muted/30 transition-colors">
-                          <TableCell className="py-2">
-                            <Link
-                              to="/admin/kabales/$kabaleId"
-                              params={{ kabaleId: app.kabale.id }}
-                              className="text-primary hover:underline font-medium transition-colors text-sm"
-                            >
-                              {app.kabale.name}
-                            </Link>
-                          </TableCell>
                           <TableCell className="py-2">
                             <Badge variant={getStatusBadgeVariant(app.status)} className="text-xs">
                               {app.status.replace('_', ' ')}
@@ -282,6 +267,9 @@ function CitizenDetailsPage() {
                               <span className="text-muted-foreground text-xs">-</span>
                             )}
                           </TableCell>
+                          <TableCell className="text-muted-foreground text-xs py-2">
+                            {app._count.verificationLogs}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -299,7 +287,7 @@ function CitizenDetailsPage() {
                   Digital IDs
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  {citizen.digitalIds.length} total
+                  {citizen.digitalIds.length} digital ID{citizen.digitalIds.length !== 1 ? 's' : ''} from this Kabale
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -307,7 +295,6 @@ function CitizenDetailsPage() {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-muted/50">
-                        <TableHead className="font-semibold text-xs">Kabale</TableHead>
                         <TableHead className="font-semibold text-xs">Status</TableHead>
                         <TableHead className="font-semibold text-xs">Issued</TableHead>
                         <TableHead className="font-semibold text-xs">Expires</TableHead>
@@ -316,15 +303,6 @@ function CitizenDetailsPage() {
                     <TableBody>
                       {citizen.digitalIds.map((digitalId) => (
                         <TableRow key={digitalId.id} className="hover:bg-muted/30 transition-colors">
-                          <TableCell className="py-2">
-                            <Link
-                              to="/admin/kabales/$kabaleId"
-                              params={{ kabaleId: digitalId.application.kabale.id }}
-                              className="text-primary hover:underline font-medium transition-colors text-sm"
-                            >
-                              {digitalId.application.kabale.name}
-                            </Link>
-                          </TableCell>
                           <TableCell className="py-2">
                             <Badge variant={getStatusBadgeVariant(digitalId.status)} className="text-xs">
                               {digitalId.status}

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
-import { ArrowLeftIcon } from 'lucide-react';
+import { ArrowLeft, Edit, Building2, MapPin, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -127,25 +127,33 @@ function UpdateUserPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center gap-4">
         <Link to="/admin/users/$userId" params={{ userId: user.id }}>
-          <Button variant="ghost" size="icon">
-            <ArrowLeftIcon className="size-4" />
+          <Button variant="outline" size="icon">
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <div>
-          <h1 className="text-3xl font-bold">Edit User</h1>
-          <p className="text-muted-foreground mt-2">
-            Update user information
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+            <Edit className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Edit User</h1>
+            <p className="text-muted-foreground mt-1.5">
+              Update user information
+            </p>
+          </div>
         </div>
       </div>
 
-      <Card>
+      <Card className="border-2">
         <CardHeader>
-          <CardTitle>User Information</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Edit className="h-5 w-5 text-primary" />
+            User Information
+          </CardTitle>
+          <CardDescription className="text-base">
             Update the user details below. Leave password empty to keep current password.
           </CardDescription>
         </CardHeader>
@@ -153,8 +161,8 @@ function UpdateUserPage() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
+                <Alert variant="destructive" className="border-2">
+                  <AlertDescription className="font-medium">{error}</AlertDescription>
                 </Alert>
               )}
 
@@ -164,9 +172,9 @@ function UpdateUserPage() {
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>First Name</FormLabel>
+                      <FormLabel className="text-base">First Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John" {...field} value={field.value || ''} />
+                        <Input placeholder="John" className="h-11" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -178,9 +186,9 @@ function UpdateUserPage() {
                   name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Last Name</FormLabel>
+                      <FormLabel className="text-base">Last Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Doe" {...field} value={field.value || ''} />
+                        <Input placeholder="Doe" className="h-11" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -194,9 +202,9 @@ function UpdateUserPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="text-base">Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="email@example.com" {...field} value={field.value || ''} />
+                        <Input type="email" placeholder="email@example.com" className="h-11" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -208,9 +216,9 @@ function UpdateUserPage() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone</FormLabel>
+                      <FormLabel className="text-base">Phone</FormLabel>
                       <FormControl>
-                        <Input type="tel" placeholder="+1234567890" {...field} value={field.value || ''} />
+                        <Input type="tel" placeholder="+1234567890" className="h-11" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -218,7 +226,7 @@ function UpdateUserPage() {
                 />
               </div>
 
-              <div className="text-sm text-muted-foreground">
+              <div className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">
                 <p>At least one of email or phone is required</p>
               </div>
 
@@ -227,11 +235,12 @@ function UpdateUserPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password (Optional)</FormLabel>
+                    <FormLabel className="text-base">New Password (Optional)</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
                         placeholder="Leave empty to keep current password"
+                        className="h-11"
                         {...field}
                         value={field.value || ''}
                       />
@@ -249,7 +258,7 @@ function UpdateUserPage() {
                 name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role</FormLabel>
+                    <FormLabel className="text-base">Role</FormLabel>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
@@ -260,7 +269,7 @@ function UpdateUserPage() {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-11">
                           <SelectValue placeholder="Select a role" />
                         </SelectTrigger>
                       </FormControl>
@@ -296,10 +305,10 @@ function UpdateUserPage() {
                   name="kabaleId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Kabale</FormLabel>
+                      <FormLabel className="text-base">Kabale</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="h-11">
                             <SelectValue placeholder="Select a Kabale" />
                           </SelectTrigger>
                         </FormControl>
@@ -312,14 +321,33 @@ function UpdateUserPage() {
                         </SelectContent>
                       </Select>
                       <FormMessage />
+                      {kabales.find(k => k.id === field.value) && (
+                        <Card className="mt-3 border-2 bg-muted/50">
+                          <CardHeader className="pb-3">
+                            <CardTitle className="text-sm flex items-center gap-2">
+                              <Building2 className="h-4 w-4 text-primary" />
+                              Selected Kabale
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-2 text-sm">
+                            {kabales.find(k => k.id === field.value)?.address && (
+                              <div className="flex items-start gap-2">
+                                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                                <span className="text-muted-foreground">{kabales.find(k => k.id === field.value)?.address}</span>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      )}
                     </FormItem>
                   )}
                 />
               )}
 
-              <div className="flex gap-4">
-                <Button type="submit" disabled={isLoading}>
+              <div className="flex gap-4 pt-2">
+                <Button type="submit" disabled={isLoading} className="group">
                   {isLoading ? 'Updating...' : 'Update User'}
+                  <CheckCircle2 className="h-4 w-4 ml-2" />
                 </Button>
                 <Link to="/admin/users/$userId" params={{ userId: user.id }}>
                   <Button type="button" variant="outline">

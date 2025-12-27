@@ -9,6 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Label } from '@/components/ui/label';
 import {
     Table,
@@ -21,8 +22,9 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { reviewApplicationFn } from '@/server/kabales';
 import { getAllApplicationsFn } from '@/server/system';
-import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
+import { FileText, CheckCircle2, XCircle, Eye, User, Mail, Phone, Calendar, CreditCard, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -104,126 +106,182 @@ function KabaleApplicationsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">ID Applications</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage ID applications for your Kabale
-        </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+          <FileText className="h-6 w-6 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">ID Applications</h1>
+          <p className="text-muted-foreground mt-1.5">
+            Manage all ID applications across the system
+          </p>
+        </div>
       </div>
 
-      <Card>
+      <Card className="border-2">
         <CardHeader>
-          <CardTitle>All Applications</CardTitle>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" />
+            All Applications
+          </CardTitle>
           <CardDescription>
             {applications.length} application{applications.length !== 1 ? 's' : ''} found
           </CardDescription>
         </CardHeader>
         <CardContent>
           {applications.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">
-              <p>No applications found</p>
-            </div>
+            <Card className="border-2 border-dashed">
+              <Empty>
+                <EmptyMedia variant="icon">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                    <FileText className="h-8 w-8 text-primary" />
+                  </div>
+                </EmptyMedia>
+                <EmptyHeader>
+                  <EmptyTitle className="text-xl">No applications found</EmptyTitle>
+                  <EmptyDescription className="text-base">
+                    No ID applications have been submitted yet.
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            </Card>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Citizen</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Submitted</TableHead>
-                  <TableHead>Digital ID</TableHead>
-                  <TableHead>Verifications</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {applications.map((application) => (
-                  <TableRow key={application.id}>
-                    <TableCell className="font-medium">
-                      {application.citizenProfile.user.firstName || ''}{' '}
-                      {application.citizenProfile.user.lastName || ''}
-                    </TableCell>
-                    <TableCell>
-                      {application.citizenProfile.user.email || '-'}
-                    </TableCell>
-                    <TableCell>
-                      {application.citizenProfile.phone ||
-                        application.citizenProfile.user.phone ||
-                        '-'}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusBadgeVariant(application.status)}>
-                        {application.status.replace('_', ' ')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {application.submittedAt
-                        ? new Date(application.submittedAt).toLocaleDateString()
-                        : new Date(application.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      {application.digitalId ? (
-                        <Badge
-                          variant={
-                            application.digitalId.status === 'ACTIVE'
-                              ? 'default'
-                              : application.digitalId.status === 'REVOKED'
-                                ? 'destructive'
-                                : 'secondary'
-                          }
-                        >
-                          {application.digitalId.status}
-                        </Badge>
-                      ) : (
-                        '-'
-                      )}
-                    </TableCell>
-                    <TableCell>{application._count.verificationLogs}</TableCell>
-                    <TableCell className="text-right space-x-2">
-                      {(application.status === 'SUBMITTED' ||
-                        application.status === 'PENDING_VERIFICATION') && (
-                        <>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                            onClick={() => handleReviewClick(application.id, 'APPROVE')}
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => handleReviewClick(application.id, 'REJECT')}
-                          >
-                            Reject
-                          </Button>
-                        </>
-                      )}
-                      <Button variant="ghost" size="sm" disabled>
-                        View
-                      </Button>
-                    </TableCell>
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="font-semibold">Citizen</TableHead>
+                    <TableHead className="font-semibold">Email</TableHead>
+                    <TableHead className="font-semibold">Phone</TableHead>
+                    <TableHead className="font-semibold">Status</TableHead>
+                    <TableHead className="font-semibold">Submitted</TableHead>
+                    <TableHead className="font-semibold">Digital ID</TableHead>
+                    <TableHead className="font-semibold">Verifications</TableHead>
+                    <TableHead className="text-right font-semibold">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {applications.map((application) => (
+                    <TableRow key={application.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          {application.citizenProfile.user.firstName || ''}{' '}
+                          {application.citizenProfile.user.lastName || ''}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-3.5 w-3.5" />
+                          {application.citizenProfile.user.email || '-'}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-3.5 w-3.5" />
+                          {application.citizenProfile.phone ||
+                            application.citizenProfile.user.phone ||
+                            '-'}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={getStatusBadgeVariant(application.status)}>
+                          {application.status.replace('_', ' ')}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-3.5 w-3.5" />
+                          {application.submittedAt
+                            ? new Date(application.submittedAt).toLocaleDateString()
+                            : new Date(application.createdAt).toLocaleDateString()}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {application.digitalId ? (
+                          <Badge
+                            variant={
+                              application.digitalId.status === 'ACTIVE'
+                                ? 'default'
+                                : application.digitalId.status === 'REVOKED'
+                                  ? 'destructive'
+                                  : 'secondary'
+                            }
+                          >
+                            <CreditCard className="h-3 w-3 mr-1" />
+                            {application.digitalId.status}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <AlertCircle className="h-3.5 w-3.5 text-muted-foreground" />
+                          {application._count.verificationLogs}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          {(application.status === 'SUBMITTED' ||
+                            application.status === 'PENDING_VERIFICATION') && (
+                            <>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-primary border-primary/20 hover:bg-primary/10 hover:text-primary"
+                                onClick={() => handleReviewClick(application.id, 'APPROVE')}
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
+                                Approve
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+                                onClick={() => handleReviewClick(application.id, 'REJECT')}
+                              >
+                                <XCircle className="h-3.5 w-3.5 mr-1.5" />
+                                Reject
+                              </Button>
+                            </>
+                          )}
+                          <Link to="/admin/citizens/$citizenId" params={{ citizenId: application.citizenProfile.id }}>
+                            <Button variant="ghost" size="sm" className="group">
+                              <Eye className="h-3.5 w-3.5 mr-1.5 transition-transform group-hover:scale-110" />
+                              View
+                            </Button>
+                          </Link>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
 
       <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>
-              {selectedApplication?.action === 'APPROVE'
-                ? 'Approve Application'
-                : 'Reject Application'}
+            <DialogTitle className="text-2xl flex items-center gap-2">
+              {selectedApplication?.action === 'APPROVE' ? (
+                <>
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                  Approve Application
+                </>
+              ) : (
+                <>
+                  <XCircle className="h-5 w-5 text-destructive" />
+                  Reject Application
+                </>
+              )}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-base">
               {selectedApplication?.action === 'APPROVE'
                 ? 'Are you sure you want to approve this application? This will create an active Digital ID for the citizen.'
                 : 'Are you sure you want to reject this application? Please provide a reason.'}
@@ -232,10 +290,10 @@ function KabaleApplicationsPage() {
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="notes">
+              <Label htmlFor="notes" className="text-base">
                 {selectedApplication?.action === 'APPROVE'
                   ? 'Notes (Optional)'
-                  : 'Reason for Rejection'}
+                  : 'Reason for Rejection *'}
               </Label>
               <Textarea
                 id="notes"
@@ -246,14 +304,23 @@ function KabaleApplicationsPage() {
                     ? 'Add any internal notes...'
                     : 'Please explain why this application is being rejected...'
                 }
+                className="min-h-[100px]"
               />
+              {selectedApplication?.action === 'REJECT' && (
+                <p className="text-xs text-muted-foreground">
+                  A reason is required when rejecting an application.
+                </p>
+              )}
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
-              onClick={() => setReviewDialogOpen(false)}
+              onClick={() => {
+                setReviewDialogOpen(false);
+                setReviewNotes('');
+              }}
               disabled={isSubmitting}
             >
               Cancel
@@ -267,12 +334,24 @@ function KabaleApplicationsPage() {
                 isSubmitting ||
                 (selectedApplication?.action === 'REJECT' && !reviewNotes.trim())
               }
+              className="group"
             >
-              {isSubmitting
-                ? 'Processing...'
-                : selectedApplication?.action === 'APPROVE'
-                  ? 'Approve Application'
-                  : 'Reject Application'}
+              {isSubmitting ? (
+                <>
+                  <AlertCircle className="h-4 w-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : selectedApplication?.action === 'APPROVE' ? (
+                <>
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Approve Application
+                </>
+              ) : (
+                <>
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Reject Application
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

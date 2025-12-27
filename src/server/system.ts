@@ -773,3 +773,211 @@ export const getAllApplicationsFn = createServerFn({ method: 'GET' })
       applications,
     };
   });
+
+/**
+ * Design configuration schema
+ */
+const idDesignConfigSchema = z.object({
+  primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Primary color must be a valid hex color'),
+  secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Secondary color must be a valid hex color'),
+  backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Background color must be a valid hex color'),
+  textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Text color must be a valid hex color'),
+  fontFamily: z.string().min(1, 'Font family is required'),
+  logoUrl: z.string().url().optional().or(z.literal('')),
+  headerText: z.string().optional(),
+  layoutTemplate: z.enum(['standard', 'compact', 'detailed']).default('standard'),
+  // Back-side design settings
+  backBackgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Back background color must be a valid hex color').optional(),
+  backTextColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Back text color must be a valid hex color').optional(),
+  backHeaderText: z.string().optional(),
+  backContentText: z.string().optional(),
+  // Expiry duration configuration
+  expiryDurationYears: z.number().int().min(1, 'Expiry duration must be at least 1 year').max(20, 'Expiry duration must be at most 20 years').default(3),
+});
+
+/**
+ * Get ID design configuration
+ * Returns the active design config or creates a default one
+ */
+export const getIdDesignConfigFn = createServerFn({ method: 'GET' })
+  .handler(async () => {
+    // Try to get active config
+    let config = await prisma.idDesignConfig.findFirst({
+      where: { isActive: true },
+    });
+
+    // If no config exists, create default
+    // Use upsert to handle race conditions where another request might have created it
+    if (!config) {
+      const defaultConfig = {
+        primaryColor: '#1e40af',
+        secondaryColor: '#3b82f6',
+        backgroundColor: '#ffffff',
+        textColor: '#1f2937',
+        fontFamily: 'Helvetica',
+        logoUrl: '',
+        headerText: 'Residential ID Card',
+        layoutTemplate: 'standard' as const,
+        backBackgroundColor: '#f3f4f6',
+        backTextColor: '#1f2937',
+        backHeaderText: 'Verification Information',
+        backContentText: 'This is an official Digital ID card issued by the Kabale administration.',
+        expiryDurationYears: 3,
+      };
+
+      try {
+        config = await prisma.idDesignConfig.create({
+          data: {
+            config: defaultConfig,
+            isActive: true,
+          },
+        });
+      } catch (error: any) {
+        // If unique constraint fails, another request created it - fetch it
+        if (error?.code === 'P2002' || error?.message?.includes('Unique constraint')) {
+          config = await prisma.idDesignConfig.findFirst({
+            where: { isActive: true },
+          });
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    // If still no config (shouldn't happen, but safety check)
+    if (!config) {
+      return {
+        success: false,
+        error: 'Failed to load or create design configuration',
+      };
+    }
+
+    return {
+      success: true,
+      config: config.config as z.infer<typeof idDesignConfigSchema>,
+    };
+  });
+
+/**
+ * Update ID design configuration (System Admin only)
+ */
+export const updateIdDesignConfigFn = createServerFn({ method: 'POST' })
+  .inputValidator(idDesignConfigSchema)
+  .middleware([requireSystemAdminMiddleware])
+  .handler(async ({ data }) => {
+    // Validate the config data
+    const validatedConfig = idDesignConfigSchema.parse(data);
+
+    // Get or create active config
+    let activeConfig = await prisma.idDesignConfig.findFirst({
+      where: { isActive: true },
+    });
+
+    if (activeConfig) {
+      // Update existing config
+      activeConfig = await prisma.idDesignConfig.update({
+        where: { id: activeConfig.id },
+        data: {
+          config: validatedConfig,
+        },
+      });
+    } else {
+      // Create new config
+      // Handle potential race condition where another request might have created it
+      try {
+        activeConfig = await prisma.idDesignConfig.create({
+          data: {
+            config: validatedConfig,
+            isActive: true,
+          },
+        });
+      } catch (error: any) {
+        // If unique constraint fails, another request created it - fetch and update it
+        if (error?.code === 'P2002' || error?.message?.includes('Unique constraint')) {
+          activeConfig = await prisma.idDesignConfig.findFirst({
+            where: { isActive: true },
+          });
+          if (activeConfig) {
+            activeConfig = await prisma.idDesignConfig.update({
+              where: { id: activeConfig.id },
+              data: {
+                config: validatedConfig,
+              },
+            });
+          } else {
+            return {
+              success: false,
+              error: 'Failed to create or update design configuration',
+            };
+          }
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    return {
+      success: true,
+      config: activeConfig.config as z.infer<typeof idDesignConfigSchema>,
+    };
+  });
+
+/**
+ * Verify digital ID (Public access)
+ * Returns public information about a digital ID for verification purposes
+ */
+export const verifyDigitalIdFn = createServerFn({ method: 'GET' })
+  .inputValidator(z.object({ digitalIdId: z.string() }))
+  .handler(async ({ data }) => {
+    const digitalId = await prisma.digitalId.findUnique({
+      where: { id: data.digitalIdId },
+      include: {
+        citizen: {
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: false, // Don't expose email in public verification
+              },
+            },
+          },
+        },
+        application: {
+          include: {
+            kabale: {
+              select: {
+                name: true,
+                address: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!digitalId) {
+      return {
+        success: false,
+        error: 'Digital ID not found',
+      };
+    }
+
+    // Return only public verification information
+    return {
+      success: true,
+      digitalId: {
+        id: digitalId.id,
+        status: digitalId.status,
+        issuedAt: digitalId.issuedAt,
+        expiresAt: digitalId.expiresAt,
+        citizen: {
+          name: `${digitalId.citizen.user.firstName || ''} ${digitalId.citizen.user.lastName || ''}`.trim(),
+        },
+        kabale: {
+          name: digitalId.application.kabale.name,
+          address: digitalId.application.kabale.address,
+        },
+      },
+    };
+  });

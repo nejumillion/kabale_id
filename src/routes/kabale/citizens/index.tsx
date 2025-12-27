@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { UserCheck, Eye } from 'lucide-react';
+import { UserCheck, Eye, User, Mail, Phone, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
@@ -11,11 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getAllCitizensFn } from '@/server/system';
+import { getKabaleAdminCitizensFn } from '@/server/kabales';
 
-export const Route = createFileRoute('/admin/citizens/')({
+export const Route = createFileRoute('/kabale/citizens/')({
   loader: async () => {
-    const result = await getAllCitizensFn();
+    const result = await getKabaleAdminCitizensFn();
+    if (!result.success) {
+      throw new Response(result.error || 'Failed to load citizens', { status: 500 });
+    }
     return { citizens: result.citizens };
   },
   component: CitizensListPage,
@@ -26,6 +29,7 @@ function CitizensListPage() {
 
   return (
     <div className="space-y-8">
+      {/* Header */}
       <div className="flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
           <UserCheck className="h-6 w-6 text-primary" />
@@ -33,7 +37,7 @@ function CitizensListPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Citizens</h1>
           <p className="text-muted-foreground mt-1.5">
-            View all registered citizens
+            View all citizens who have applied to your Kabale
           </p>
         </div>
       </div>
@@ -45,7 +49,7 @@ function CitizensListPage() {
             All Citizens
           </CardTitle>
           <CardDescription>
-            {citizens.length} citizen{citizens.length !== 1 ? 's' : ''} registered
+            {citizens.length} citizen{citizens.length !== 1 ? 's' : ''} found
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -60,7 +64,7 @@ function CitizensListPage() {
                 <EmptyHeader>
                   <EmptyTitle className="text-xl">No citizens found</EmptyTitle>
                   <EmptyDescription className="text-base">
-                    No citizens have registered yet.
+                    No citizens have applied to your Kabale yet.
                   </EmptyDescription>
                 </EmptyHeader>
               </Empty>
@@ -81,21 +85,37 @@ function CitizensListPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {citizens.map((citizen: (typeof citizens)[0]) => (
+                  {citizens.map((citizen) => (
                     <TableRow key={citizen.id} className="hover:bg-muted/30 transition-colors">
                       <TableCell className="font-medium">
-                        {citizen.user.firstName} {citizen.user.lastName}
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          {citizen.user.firstName || ''} {citizen.user.lastName || ''}
+                        </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{citizen.user.email || '-'}</TableCell>
-                      <TableCell className="text-muted-foreground">{citizen.phone || citizen.user.phone || '-'}</TableCell>
                       <TableCell className="text-muted-foreground">
-                        {new Date(citizen.dateOfBirth).toLocaleDateString()}
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-3.5 w-3.5" />
+                          {citizen.user.email || '-'}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-3.5 w-3.5" />
+                          {citizen.phone || citizen.user.phone || '-'}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-3.5 w-3.5" />
+                          {new Date(citizen.dateOfBirth).toLocaleDateString()}
+                        </div>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{citizen.gender || '-'}</TableCell>
                       <TableCell>{citizen._count.idApplications}</TableCell>
                       <TableCell>{citizen._count.digitalIds}</TableCell>
                       <TableCell className="text-right">
-                        <Link to="/admin/citizens/$citizenId" params={{ citizenId: citizen.id }}>
+                        <Link to="/kabale/citizens/$citizenId" params={{ citizenId: citizen.id }}>
                           <Button variant="ghost" size="sm" className="group">
                             <Eye className="h-4 w-4 mr-2 transition-transform group-hover:scale-110" />
                             View

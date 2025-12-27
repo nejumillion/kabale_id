@@ -82,7 +82,6 @@ function TabsTrigger({ className, value, children, onClick, disabled, ...props }
   const isActive = selectedValue === value;
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log('clicked');
     if (disabled) return;
     onValueChange(value);
     onClick?.(e);

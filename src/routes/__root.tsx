@@ -19,7 +19,7 @@ const generateHead = () => {
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Kabale Digital ID - Official Digital Identity Platform',
+        title: 'Residential ID Card - Official Digital Identity Platform',
       },
     ],
     links: [

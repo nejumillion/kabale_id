@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import {
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
 } from '@/components/ui/table';
 import { getKabaleDigitalIdsFn } from '@/server/system';
 import { createFileRoute } from '@tanstack/react-router';
+import { CreditCard, User, Mail, Phone, Calendar, Clock, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 
 export const Route = createFileRoute('/kabale/digital-ids')({
   loader: async () => {
@@ -35,75 +37,126 @@ function DigitalIdsPage() {
     }
   };
 
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'ACTIVE':
+        return CheckCircle2;
+      case 'REVOKED':
+        return XCircle;
+      case 'EXPIRED':
+        return AlertCircle;
+      default:
+        return AlertCircle;
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Digital IDs</h1>
-        <p className="text-muted-foreground mt-2">
-          View all digital IDs across all Kabales
-        </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+          <CreditCard className="h-6 w-6 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Digital IDs</h1>
+          <p className="text-muted-foreground mt-1.5">
+            View all digital IDs issued by your Kabale
+          </p>
+        </div>
       </div>
 
-      <Card>
+      <Card className="border-2">
         <CardHeader>
-          <CardTitle>All Digital IDs</CardTitle>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <CreditCard className="h-5 w-5 text-primary" />
+            All Digital IDs
+          </CardTitle>
           <CardDescription>
             {digitalIds.length} digital ID{digitalIds.length !== 1 ? 's' : ''} found
           </CardDescription>
         </CardHeader>
         <CardContent>
           {digitalIds.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">
-              <p>No digital IDs found</p>
-            </div>
+            <Card className="border-2 border-dashed">
+              <Empty>
+                <EmptyMedia variant="icon">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                    <CreditCard className="h-8 w-8 text-primary" />
+                  </div>
+                </EmptyMedia>
+                <EmptyHeader>
+                  <EmptyTitle className="text-xl">No digital IDs found</EmptyTitle>
+                  <EmptyDescription className="text-base">
+                    No digital IDs have been issued by your Kabale yet.
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            </Card>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Citizen</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Kabale</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Issued</TableHead>
-                  <TableHead>Expires</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {digitalIds.map((digitalId) => (
-                  <TableRow key={digitalId.id}>
-                    <TableCell className="font-medium">
-                      {digitalId.citizen.user.firstName || ''}{' '}
-                      {digitalId.citizen.user.lastName || ''}
-                    </TableCell>
-                    <TableCell>
-                      {digitalId.citizen.user.email || '-'}
-                    </TableCell>
-                    <TableCell>
-                      {digitalId.citizen.phone ||
-                        digitalId.citizen.user.phone ||
-                        '-'}
-                    </TableCell>
-                    <TableCell>
-                      {digitalId.application.kabale.name}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusBadgeVariant(digitalId.status)}>
-                        {digitalId.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {new Date(digitalId.issuedAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      {digitalId.expiresAt
-                        ? new Date(digitalId.expiresAt).toLocaleDateString()
-                        : 'Never'}
-                    </TableCell>
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="font-semibold">Citizen</TableHead>
+                    <TableHead className="font-semibold">Email</TableHead>
+                    <TableHead className="font-semibold">Phone</TableHead>
+                    <TableHead className="font-semibold">Status</TableHead>
+                    <TableHead className="font-semibold">Issued</TableHead>
+                    <TableHead className="font-semibold">Expires</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {digitalIds.map((digitalId) => {
+                    const StatusIcon = getStatusIcon(digitalId.status);
+                    return (
+                      <TableRow key={digitalId.id} className="hover:bg-muted/30 transition-colors">
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            {digitalId.citizen.user.firstName || ''}{' '}
+                            {digitalId.citizen.user.lastName || ''}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Mail className="h-3.5 w-3.5" />
+                            {digitalId.citizen.user.email || '-'}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Phone className="h-3.5 w-3.5" />
+                            {digitalId.citizen.phone ||
+                              digitalId.citizen.user.phone ||
+                              '-'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={getStatusBadgeVariant(digitalId.status)}>
+                            <StatusIcon className="h-3 w-3 mr-1" />
+                            {digitalId.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-3.5 w-3.5" />
+                            {new Date(digitalId.issuedAt).toLocaleDateString()}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-3.5 w-3.5" />
+                            {digitalId.expiresAt
+                              ? new Date(digitalId.expiresAt).toLocaleDateString()
+                              : 'Never'}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

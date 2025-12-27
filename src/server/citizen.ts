@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { prisma } from '@/db';
 import { profileSchema, idApplicationSchema } from '@/lib/validation';
 import { requireCitizen, requireCitizenMiddleware } from './auth-context';
+import { generateIdCardPdf } from '@/lib/pdf-generator-react-pdf';
+import { getIdDesignConfigFn } from './system';
 
 /**
  * Get citizen's own applications
@@ -515,6 +517,96 @@ export const submitIdApplicationFn = createServerFn({ method: 'POST' })
       return {
         success: false,
         error: 'Failed to submit application. Please try again.',
+      };
+    }
+  });
+
+/**
+ * Download digital ID as PDF
+ * Citizens can only download their own digital IDs
+ */
+export const downloadDigitalIdPdfFn = createServerFn({ method: 'GET' })
+  .inputValidator(z.object({ digitalIdId: z.string() }))
+  .handler(async ({ data }) => {
+    // Require citizen access
+    const user = await requireCitizen();
+
+    if (!user.citizenProfile) {
+      return {
+        success: false,
+        error: 'Citizen profile not found',
+      };
+    }
+
+    // Load the digital ID with relations
+    const digitalId = await prisma.digitalId.findUnique({
+      where: { id: data.digitalIdId },
+      include: {
+        citizen: {
+          select: {
+            photoUrl: true,
+            dateOfBirth: true,
+            gender: true,
+            phone: true,
+            address: true,
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+                phone: true,
+              },
+            },
+          },
+        },
+        application: {
+          include: {
+            kabale: {
+              select: {
+                name: true,
+                address: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Verify the digital ID belongs to the citizen
+    if (!digitalId || digitalId.citizenId !== user.citizenProfile.id) {
+      return {
+        success: false,
+        error: 'Digital ID not found or access denied',
+      };
+    }
+
+    // Get design configuration
+    const designConfigResult = await getIdDesignConfigFn();
+    if (!designConfigResult.success) {
+      return {
+        success: false,
+        error: 'Failed to load design configuration',
+      };
+    }
+
+    // Generate PDF
+    try {
+      // Get base URL from environment or request
+      const baseUrl = process.env.PUBLIC_URL
+      
+      const pdfBuffer = await generateIdCardPdf(digitalId, designConfigResult.config, baseUrl);
+
+      // Return PDF as base64 for client download
+      return {
+        success: true,
+        pdf: pdfBuffer.toString('base64'),
+        filename: `digital-id-${digitalId.id}.pdf`,
+      };
+    } catch (error) {
+      console.error('Failed to generate PDF:', error);
+      return {
+        success: false,
+        error: 'Failed to generate PDF',
       };
     }
   });

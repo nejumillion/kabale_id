@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
-import { ArrowLeftIcon } from 'lucide-react';
+import { ArrowLeft, Plus, Building2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -65,25 +65,33 @@ function CreateKabalePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center gap-4">
         <Link to="/admin/kabales">
-          <Button variant="ghost" size="icon">
-            <ArrowLeftIcon className="size-4" />
+          <Button variant="outline" size="icon">
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <div>
-          <h1 className="text-3xl font-bold">Create Kabale</h1>
-          <p className="text-muted-foreground mt-2">
-            Add a new administrative unit
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+            <Building2 className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Create Kabale</h1>
+            <p className="text-muted-foreground mt-1.5">
+              Add a new administrative unit
+            </p>
+          </div>
         </div>
       </div>
 
-      <Card>
+      <Card className="border-2">
         <CardHeader>
-          <CardTitle>Kabale Information</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-primary" />
+            Kabale Information
+          </CardTitle>
+          <CardDescription className="text-base">
             Enter the details for the new Kabale
           </CardDescription>
         </CardHeader>
@@ -91,8 +99,8 @@ function CreateKabalePage() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
+                <Alert variant="destructive" className="border-2">
+                  <AlertDescription className="font-medium">{error}</AlertDescription>
                 </Alert>
               )}
 
@@ -101,9 +109,9 @@ function CreateKabalePage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel className="text-base">Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Kabale Name" {...field} />
+                        <Input placeholder="Kabale Name" className="h-11" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -115,18 +123,19 @@ function CreateKabalePage() {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel className="text-base">Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="Street address" {...field} value={field.value || ''} />
+                      <Input placeholder="Street address" className="h-11" {...field} value={field.value || ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <div className="flex gap-4">
-                <Button type="submit" disabled={isLoading}>
+              <div className="flex gap-4 pt-2">
+                <Button type="submit" disabled={isLoading} className="group">
                   {isLoading ? 'Creating...' : 'Create Kabale'}
+                  <Plus className="h-4 w-4 ml-2 transition-transform group-hover:rotate-90" />
                 </Button>
                 <Link to="/admin/kabales">
                   <Button type="button" variant="outline">

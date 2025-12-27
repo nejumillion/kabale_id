@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
-import { ArrowLeftIcon } from 'lucide-react';
+import { ArrowLeft, Edit, Building2, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -84,25 +84,33 @@ function UpdateKabalePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center gap-4">
         <Link to="/admin/kabales/$kabaleId" params={{ kabaleId: kabale.id }}>
-          <Button variant="ghost" size="icon">
-            <ArrowLeftIcon className="size-4" />
+          <Button variant="outline" size="icon">
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <div>
-          <h1 className="text-3xl font-bold">Edit Kabale</h1>
-          <p className="text-muted-foreground mt-2">
-            Update Kabale information
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+            <Edit className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Edit Kabale</h1>
+            <p className="text-muted-foreground mt-1.5">
+              Update Kabale information
+            </p>
+          </div>
         </div>
       </div>
 
-      <Card>
+      <Card className="border-2">
         <CardHeader>
-          <CardTitle>Kabale Information</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-primary" />
+            Kabale Information
+          </CardTitle>
+          <CardDescription className="text-base">
             Update the Kabale details below
           </CardDescription>
         </CardHeader>
@@ -110,8 +118,8 @@ function UpdateKabalePage() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
+                <Alert variant="destructive" className="border-2">
+                  <AlertDescription className="font-medium">{error}</AlertDescription>
                 </Alert>
               )}
 
@@ -121,9 +129,9 @@ function UpdateKabalePage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel className="text-base">Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Kabale Name" {...field} value={field.value || ''} />
+                        <Input placeholder="Kabale Name" className="h-11" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -135,9 +143,9 @@ function UpdateKabalePage() {
                   name="code"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Code</FormLabel>
+                      <FormLabel className="text-base">Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="KAB001" {...field} value={field.value || ''} />
+                        <Input placeholder="KAB001" className="h-11" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                       <div className="text-sm text-muted-foreground">
@@ -153,9 +161,9 @@ function UpdateKabalePage() {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel className="text-base">Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="Street address" {...field} value={field.value || ''} />
+                      <Input placeholder="Street address" className="h-11" {...field} value={field.value || ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -168,9 +176,9 @@ function UpdateKabalePage() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone</FormLabel>
+                      <FormLabel className="text-base">Phone</FormLabel>
                       <FormControl>
-                        <Input type="tel" placeholder="+1234567890" {...field} value={field.value || ''} />
+                        <Input type="tel" placeholder="+1234567890" className="h-11" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -182,9 +190,9 @@ function UpdateKabalePage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="text-base">Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="kabale@example.com" {...field} value={field.value || ''} />
+                        <Input type="email" placeholder="kabale@example.com" className="h-11" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -192,9 +200,10 @@ function UpdateKabalePage() {
                 />
               </div>
 
-              <div className="flex gap-4">
-                <Button type="submit" disabled={isLoading}>
+              <div className="flex gap-4 pt-2">
+                <Button type="submit" disabled={isLoading} className="group">
                   {isLoading ? 'Updating...' : 'Update Kabale'}
+                  <CheckCircle2 className="h-4 w-4 ml-2" />
                 </Button>
                 <Link to="/admin/kabales/$kabaleId" params={{ kabaleId: kabale.id }}>
                   <Button type="button" variant="outline">

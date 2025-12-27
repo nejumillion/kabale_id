@@ -1,7 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import {
 	AlertCircle,
+	ArrowLeft,
 	Building2,
 	Calendar,
 	CheckCircle2,
@@ -228,31 +229,38 @@ function CitizenApplicationsPage() {
 	const selectedKabale = kabales.find(k => k.id === form.watch('kabaleId'))
 
 	return (
-		<div className="container mx-auto space-y-6 p-4 md:p-6 lg:p-8">
+		<div className="container mx-auto space-y-8 p-4 md:p-6 lg:p-8">
 			{/* Header */}
-			<div className="flex items-center justify-between">
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div className='flex gap-2 items-center justify-center'>
+					<Link to="/citizen">
+					<Button variant="outline" size="icon">
+						<ArrowLeft className="h-4 w-4" />
+					</Button>
+					</Link>
 				<div>
-					<h1 className="text-3xl font-bold tracking-tight">My Applications</h1>
-					<p className="text-muted-foreground text-sm mt-1">
+					<h1 className="text-3xl font-bold tracking-tight sm:text-4xl">My Applications</h1>
+					<p className="text-muted-foreground mt-1.5">
 						Manage your Digital ID applications
 					</p>
 				</div>
+				</div>
 				<Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
 					<DialogTrigger asChild>
-						<Button>
-							<Plus className="h-4 w-4 mr-2" />
+						<Button className="group">
+							<Plus className="h-4 w-4 mr-2 transition-transform group-hover:rotate-90" />
 							Create Application
 						</Button>
 					</DialogTrigger>
-					<DialogContent>
+					<DialogContent className="sm:max-w-[500px]">
 						<DialogHeader>
-							<DialogTitle>Create New Application</DialogTitle>
-							<DialogDescription>
+							<DialogTitle className="text-2xl">Create New Application</DialogTitle>
+							<DialogDescription className="text-base">
 								Select a Kabale office where you will complete your in-person verification.
 							</DialogDescription>
 						</DialogHeader>
 						<Form {...form}>
-							<form onSubmit={form.handleSubmit(handleCreate)} className="space-y-4">
+							<form onSubmit={form.handleSubmit(handleCreate)} className="space-y-6">
 								{error && (
 									<Alert variant="destructive">
 										<AlertCircle className="h-4 w-4" />
@@ -264,14 +272,14 @@ function CitizenApplicationsPage() {
 									name="kabaleId"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Kabale *</FormLabel>
+											<FormLabel className="text-base">Kabale *</FormLabel>
 											<Select
 												onValueChange={field.onChange}
 												defaultValue={field.value}
 												disabled={loadingKabales}
 											>
 												<FormControl>
-													<SelectTrigger>
+													<SelectTrigger className="h-11">
 														<SelectValue
 															placeholder={
 																loadingKabales
@@ -294,9 +302,12 @@ function CitizenApplicationsPage() {
 									)}
 								/>
 								{selectedKabale && (
-									<Card>
+									<Card className="border-2 bg-muted/50">
 										<CardHeader className="pb-3">
-											<CardTitle className="text-sm">Kabale Information</CardTitle>
+											<CardTitle className="text-base flex items-center gap-2">
+												<Building2 className="h-4 w-4 text-primary" />
+												Kabale Information
+											</CardTitle>
 										</CardHeader>
 										<CardContent className="space-y-2 text-sm">
 											{selectedKabale.address && (
@@ -309,7 +320,7 @@ function CitizenApplicationsPage() {
 										</CardContent>
 									</Card>
 								)}
-								<DialogFooter>
+								<DialogFooter className="gap-2 sm:gap-0">
 									<Button
 										type="button"
 										variant="outline"
@@ -321,8 +332,9 @@ function CitizenApplicationsPage() {
 									>
 										Cancel
 									</Button>
-									<Button type="submit" disabled={loadingKabales}>
+									<Button type="submit" disabled={loadingKabales} className="group">
 										Create Application
+										<Plus className="h-4 w-4 ml-2 transition-transform group-hover:rotate-90" />
 									</Button>
 								</DialogFooter>
 							</form>
@@ -333,52 +345,61 @@ function CitizenApplicationsPage() {
 
 			{/* Success/Error Messages */}
 			{success && (
-				<Alert>
-					<CheckCircle2 className="h-4 w-4" />
-					<AlertDescription>{success}</AlertDescription>
+				<Alert className="border-2 border-primary/20 bg-primary/5">
+					<CheckCircle2 className="h-4 w-4 text-primary" />
+					<AlertDescription className="font-medium">{success}</AlertDescription>
 				</Alert>
 			)}
 			{error && !isCreateDialogOpen && !editingApplication && (
-				<Alert variant="destructive">
+				<Alert variant="destructive" className="border-2">
 					<AlertCircle className="h-4 w-4" />
-					<AlertDescription>{error}</AlertDescription>
+					<AlertDescription className="font-medium">{error}</AlertDescription>
 				</Alert>
 			)}
 
 			{/* Applications List */}
 			{applications.length === 0 ? (
-				<Card>
+				<Card className="border-2 border-dashed">
 					<Empty>
 						<EmptyMedia variant="icon">
-							<FileText className="h-6 w-6" />
+							<div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+								<FileText className="h-8 w-8 text-primary" />
+							</div>
 						</EmptyMedia>
 						<EmptyHeader>
-							<EmptyTitle>No applications yet</EmptyTitle>
-							<EmptyDescription>
+							<EmptyTitle className="text-xl">No applications yet</EmptyTitle>
+							<EmptyDescription className="text-base">
 								You haven't created any ID applications. Start by creating a new application.
 							</EmptyDescription>
 						</EmptyHeader>
 					</Empty>
 				</Card>
 			) : (
-				<div className="grid gap-4 md:grid-cols-2">
+				<div className="grid gap-4 sm:gap-6 md:grid-cols-2">
 					{applications.map((application) => (
-						<Card key={application.id} className="hover:shadow-md transition-shadow">
-							<CardHeader>
-								<div className="flex items-start justify-between">
-									<div className="space-y-1">
-										<CardTitle className="text-base flex items-center gap-2">
-											<Building2 className="h-4 w-4 text-muted-foreground" />
+						<Card 
+							key={application.id} 
+							className="group relative overflow-hidden border-2 transition-all duration-300 hover:border-primary/50 hover:shadow-lg"
+						>
+							<div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+							<CardHeader className="relative">
+								<div className="flex items-start justify-between gap-4">
+									<div className="space-y-2 flex-1">
+										<CardTitle className="text-lg flex items-center gap-2">
+											<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+												<Building2 className="h-4 w-4 text-primary" />
+											</div>
 											{application.kabale.name}
 										</CardTitle>
-										<CardDescription className="text-xs">
-											Address: {application.kabale.address}
+										<CardDescription className="text-sm flex items-start gap-1.5">
+											<MapPin className="h-3.5 w-3.5 mt-0.5 text-muted-foreground" />
+											{application.kabale.address}
 										</CardDescription>
 									</div>
 									{getStatusBadge(application.status)}
 								</div>
 							</CardHeader>
-							<CardContent className="space-y-4">
+							<CardContent className="relative space-y-4">
 								<div className="space-y-2 text-sm">
 									<div className="flex items-center gap-2 text-muted-foreground">
 										<Calendar className="h-4 w-4" />
@@ -404,17 +425,8 @@ function CitizenApplicationsPage() {
 									)}
 								</div>
 
-								{application.kabale.address && (
-									<div className="pt-2 border-t space-y-1">
-										<div className="flex items-start gap-2 text-sm">
-											<MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-											<span className="text-muted-foreground">{application.kabale.address}</span>
-										</div>
-									</div>
-								)}
-
 								{application.digitalId && (
-									<div className="pt-2 border-t">
+									<div className="pt-3 border-t">
 										<div className="flex items-center gap-2 text-sm">
 											<IdCard className="h-4 w-4 text-primary" />
 											<span className="font-medium">Digital ID:</span>
@@ -426,12 +438,12 @@ function CitizenApplicationsPage() {
 								)}
 
 								{application.verificationLogs.length > 0 && (
-									<div className="pt-2 border-t">
-										<h4 className="mb-2 text-sm font-semibold">Recent Verifications</h4>
-										<div className="space-y-2">
+									<div className="pt-3 border-t">
+										<h4 className="mb-3 text-sm font-semibold">Recent Verifications</h4>
+										<div className="space-y-3">
 											{application.verificationLogs.map((log) => (
-												<div key={log.id} className="text-sm">
-													<div className="flex items-center gap-2">
+												<div key={log.id} className="rounded-lg bg-muted/50 p-3 text-sm">
+													<div className="flex items-center gap-2 mb-2">
 														<Badge variant={log.result === 'APPROVED' ? 'default' : 'destructive'} className="text-xs">
 															{log.result}
 														</Badge>
@@ -439,7 +451,7 @@ function CitizenApplicationsPage() {
 															by {log.verifier.email}
 														</span>
 													</div>
-													<div className="text-muted-foreground text-xs mt-1">
+													<div className="text-muted-foreground text-xs">
 														{new Date(log.verifiedAt).toLocaleDateString('en-US', {
 															year: 'numeric',
 															month: 'long',
@@ -447,7 +459,7 @@ function CitizenApplicationsPage() {
 														})}
 													</div>
 													{log.notes && (
-														<p className="text-muted-foreground text-xs mt-1 italic">
+														<p className="text-muted-foreground text-xs mt-2 italic">
 															Note: {log.notes}
 														</p>
 													)}
@@ -458,7 +470,7 @@ function CitizenApplicationsPage() {
 								)}
 
 								{application.status === 'DRAFT' && (
-									<div className="pt-2 border-t flex gap-2">
+									<div className="pt-4 border-t flex flex-col gap-3 sm:flex-row">
 										<Dialog open={editingApplication === application.id} onOpenChange={(open) => {
 											if (!open) {
 												setEditingApplication(null)
@@ -469,23 +481,23 @@ function CitizenApplicationsPage() {
 											<DialogTrigger asChild>
 												<Button
 													variant="outline"
-													size="sm"
-													className="flex-1"
+													size="default"
+													className="flex-1 group/btn"
 													onClick={() => openEditDialog(application)}
 												>
-													<Edit className="h-4 w-4 mr-2" />
+													<Edit className="h-4 w-4 mr-2 transition-transform group-hover/btn:scale-110" />
 													Edit
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent className="sm:max-w-[500px]">
 												<DialogHeader>
-													<DialogTitle>Edit Application</DialogTitle>
-													<DialogDescription>
+													<DialogTitle className="text-2xl">Edit Application</DialogTitle>
+													<DialogDescription className="text-base">
 														Update the Kabale selection for this application.
 													</DialogDescription>
 												</DialogHeader>
 												<Form {...form}>
-													<form onSubmit={form.handleSubmit(handleEdit)} className="space-y-4">
+													<form onSubmit={form.handleSubmit(handleEdit)} className="space-y-6">
 														{error && (
 															<Alert variant="destructive">
 																<AlertCircle className="h-4 w-4" />
@@ -497,21 +509,21 @@ function CitizenApplicationsPage() {
 															name="kabaleId"
 															render={({ field }) => (
 																<FormItem>
-																	<FormLabel>Kabale *</FormLabel>
+																	<FormLabel className="text-base">Kabale *</FormLabel>
 																	<Select
 																		onValueChange={field.onChange}
 																		defaultValue={field.value}
 																		disabled={loadingKabales}
 																	>
 																		<FormControl>
-																			<SelectTrigger>
+																			<SelectTrigger className="h-11">
 																				<SelectValue placeholder="Select a Kabale" />
 																			</SelectTrigger>
 																		</FormControl>
 																		<SelectContent>
 																			{kabales.map((kabale) => (
 																				<SelectItem key={kabale.id} value={kabale.id}>
-																							{kabale.name} ({kabale.address})
+																					{kabale.name} ({kabale.address})
 																				</SelectItem>
 																			))}
 																		</SelectContent>
@@ -521,9 +533,12 @@ function CitizenApplicationsPage() {
 															)}
 														/>
 														{selectedKabale && (
-															<Card>
+															<Card className="border-2 bg-muted/50">
 																<CardHeader className="pb-3">
-																	<CardTitle className="text-sm">Kabale Information</CardTitle>
+																	<CardTitle className="text-base flex items-center gap-2">
+																		<Building2 className="h-4 w-4 text-primary" />
+																		Kabale Information
+																	</CardTitle>
 																</CardHeader>
 																<CardContent className="space-y-2 text-sm">
 																	{selectedKabale.address && (
@@ -535,7 +550,7 @@ function CitizenApplicationsPage() {
 																</CardContent>
 															</Card>
 														)}
-														<DialogFooter>
+														<DialogFooter className="gap-2 sm:gap-0">
 															<Button
 																type="button"
 																variant="outline"
@@ -547,8 +562,9 @@ function CitizenApplicationsPage() {
 															>
 																Cancel
 															</Button>
-															<Button type="submit" disabled={loadingKabales}>
+															<Button type="submit" disabled={loadingKabales} className="group">
 																Save Changes
+																<CheckCircle2 className="h-4 w-4 ml-2" />
 															</Button>
 														</DialogFooter>
 													</form>
@@ -559,8 +575,8 @@ function CitizenApplicationsPage() {
 											<AlertDialogTrigger asChild>
 												<Button
 													variant="default"
-													size="sm"
-													className="flex-1"
+													size="default"
+													className="flex-1 group/btn"
 													disabled={submittingApplication === application.id}
 												>
 													{submittingApplication === application.id ? (
@@ -570,7 +586,7 @@ function CitizenApplicationsPage() {
 														</>
 													) : (
 														<>
-															<Send className="h-4 w-4 mr-2" />
+															<Send className="h-4 w-4 mr-2 transition-transform group-hover/btn:translate-x-0.5" />
 															Submit
 														</>
 													)}
@@ -578,16 +594,17 @@ function CitizenApplicationsPage() {
 											</AlertDialogTrigger>
 											<AlertDialogContent>
 												<AlertDialogHeader>
-													<AlertDialogTitle>Submit Application?</AlertDialogTitle>
-													<AlertDialogDescription>
+													<AlertDialogTitle className="text-xl">Submit Application?</AlertDialogTitle>
+													<AlertDialogDescription className="text-base">
 														Are you sure you want to submit this application? Once submitted, you won't be able to edit it.
 														You will need to visit the Kabale office for in-person verification.
 													</AlertDialogDescription>
 												</AlertDialogHeader>
-												<AlertDialogFooter>
+												<AlertDialogFooter className="gap-2 sm:gap-0">
 													<AlertDialogCancel>Cancel</AlertDialogCancel>
-													<AlertDialogAction onClick={() => handleSubmitApplication(application.id)}>
+													<AlertDialogAction onClick={() => handleSubmitApplication(application.id)} className="group">
 														Submit Application
+														<Send className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5" />
 													</AlertDialogAction>
 												</AlertDialogFooter>
 											</AlertDialogContent>
