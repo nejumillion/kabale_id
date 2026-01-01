@@ -22,15 +22,10 @@ CREATE TABLE `User` (
 CREATE TABLE `Kabale` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
-    `code` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NULL,
-    `phone` VARCHAR(191) NULL,
-    `email` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Kabale_code_key`(`code`),
-    INDEX `Kabale_code_idx`(`code`),
     INDEX `Kabale_name_idx`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -134,6 +129,18 @@ CREATE TABLE `Session` (
     INDEX `Session_token_idx`(`token`),
     INDEX `Session_userId_idx`(`userId`),
     INDEX `Session_expiresAt_idx`(`expiresAt`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `IdDesignConfig` (
+    `id` VARCHAR(191) NOT NULL,
+    `config` JSON NOT NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `IdDesignConfig_isActive_key`(`isActive`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

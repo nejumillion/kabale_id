@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
+    "dev:1": "vite dev --port 3001",
+    "dev:2": "vite dev --port 3002",
     "build": "prisma generate && vite build",
     "setup-network": "tsx scripts/setup-network-ip.ts",
     "preview": "vite preview --port 3000 --host",
