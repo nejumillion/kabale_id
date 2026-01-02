@@ -36,15 +36,15 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
   notFoundComponent: NotFoundComponent,
   loader: async () => {
-    const user = await getCurrentUser()
+    const user = await getCurrentUser();
     return {
       user,
-    }
+    };
   },
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const { user } = Route.useLoaderData()
+  const { user } = Route.useLoaderData();
   return (
     <html lang="en">
       <head>
@@ -56,7 +56,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           {children}
           <Footer />
         </AuthProvider>
-        <TanStackDevtools
+        {/* <TanStackDevtools
           config={{
             position: 'bottom-right',
           }}
@@ -66,7 +66,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               render: <TanStackRouterDevtoolsPanel />,
             },
           ]}
-        />
+        /> */}
         <Scripts />
       </body>
     </html>
