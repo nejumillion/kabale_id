@@ -1,6 +1,6 @@
-import { prisma } from '@/db';
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
+import { prisma } from '@/db';
 import { requireKabaleAdmin, requireKabaleAdminMiddleware, requireSystemAdminMiddleware } from './auth-context';
 import { hashPassword } from './auth-utils';
 
@@ -93,6 +93,11 @@ export const getAllUsersFn = createServerFn({ method: 'GET' })
   .middleware([requireSystemAdminMiddleware])
   .handler(async () => {
     const users = await prisma.user.findMany({
+      where: {
+        role: {
+          not: 'CITIZEN',
+        },
+      },
       orderBy: { createdAt: 'desc' },
       include: {
         kabaleAdminProfile: {
@@ -317,7 +322,6 @@ export const createUserFn = createServerFn({ method: 'POST' })
           userId: user.id,
           kabaleId: data.kabaleId,
           ...(phone ? { phone } : {}),
-          
         },
       });
     }
@@ -606,9 +610,9 @@ export const getCitizenByIdFn = createServerFn({ method: 'GET' })
                 kabale: {
                   select: {
                     id: true,
-                    name: true, 
+                    name: true,
                     address: true,
-                    },
+                  },
                 },
               },
             },
@@ -678,21 +682,19 @@ export const getAllDigitalIdsFn = createServerFn({ method: 'GET' })
     };
   });
 
-
-  export const getKabaleDigitalIdsFn = createServerFn({ method: 'GET' })
-   .middleware([requireKabaleAdminMiddleware])
+export const getKabaleDigitalIdsFn = createServerFn({ method: 'GET' })
+  .middleware([requireKabaleAdminMiddleware])
   .handler(async () => {
-      const user = await requireKabaleAdmin();
-     
-         if (!user.kabaleAdminProfile) {
-           return {
-             success: false,
-             error: 'Kabale admin profile not found',
-           };
-         }
-     
-         const kabaleId = user.kabaleAdminProfile.kabaleId;
-     
+    const user = await requireKabaleAdmin();
+
+    if (!user.kabaleAdminProfile) {
+      return {
+        success: false,
+        error: 'Kabale admin profile not found',
+      };
+    }
+
+    const kabaleId = user.kabaleAdminProfile.kabaleId;
 
     const digitalIds = await prisma.digitalId.findMany({
       where: { application: { kabaleId } },
@@ -717,7 +719,7 @@ export const getAllDigitalIdsFn = createServerFn({ method: 'GET' })
               select: {
                 id: true,
                 name: true,
-                  address: true,
+                address: true,
               },
             },
           },
@@ -787,76 +789,86 @@ const idDesignConfigSchema = z.object({
   headerText: z.string().optional(),
   layoutTemplate: z.enum(['standard', 'compact', 'detailed']).default('standard'),
   // Back-side design settings
-  backBackgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Back background color must be a valid hex color').optional(),
-  backTextColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Back text color must be a valid hex color').optional(),
+  backBackgroundColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Back background color must be a valid hex color')
+    .optional(),
+  backTextColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Back text color must be a valid hex color')
+    .optional(),
   backHeaderText: z.string().optional(),
   backContentText: z.string().optional(),
   // Expiry duration configuration
-  expiryDurationYears: z.number().int().min(1, 'Expiry duration must be at least 1 year').max(20, 'Expiry duration must be at most 20 years').default(3),
+  expiryDurationYears: z
+    .number()
+    .int()
+    .min(1, 'Expiry duration must be at least 1 year')
+    .max(20, 'Expiry duration must be at most 20 years')
+    .default(3),
 });
 
 /**
  * Get ID design configuration
  * Returns the active design config or creates a default one
  */
-export const getIdDesignConfigFn = createServerFn({ method: 'GET' })
-  .handler(async () => {
-    // Try to get active config
-    let config = await prisma.idDesignConfig.findFirst({
-      where: { isActive: true },
-    });
+export const getIdDesignConfigFn = createServerFn({ method: 'GET' }).handler(async () => {
+  // Try to get active config
+  let config = await prisma.idDesignConfig.findFirst({
+    where: { isActive: true },
+  });
 
-    // If no config exists, create default
-    // Use upsert to handle race conditions where another request might have created it
-    if (!config) {
-      const defaultConfig = {
-        primaryColor: '#1e40af',
-        secondaryColor: '#3b82f6',
-        backgroundColor: '#ffffff',
-        textColor: '#1f2937',
-        fontFamily: 'Helvetica',
-        logoUrl: '',
-        headerText: 'Residential ID Card',
-        layoutTemplate: 'standard' as const,
-        backBackgroundColor: '#f3f4f6',
-        backTextColor: '#1f2937',
-        backHeaderText: 'Verification Information',
-        backContentText: 'This is an official Digital ID card issued by the Kabale administration.',
-        expiryDurationYears: 3,
-      };
+  // If no config exists, create default
+  // Use upsert to handle race conditions where another request might have created it
+  if (!config) {
+    const defaultConfig = {
+      primaryColor: '#1e40af',
+      secondaryColor: '#3b82f6',
+      backgroundColor: '#ffffff',
+      textColor: '#1f2937',
+      fontFamily: 'Helvetica',
+      logoUrl: '',
+      headerText: 'Residential ID Card',
+      layoutTemplate: 'standard' as const,
+      backBackgroundColor: '#f3f4f6',
+      backTextColor: '#1f2937',
+      backHeaderText: 'Verification Information',
+      backContentText: 'This is an official Digital ID card issued by the Kabale administration.',
+      expiryDurationYears: 3,
+    };
 
-      try {
-        config = await prisma.idDesignConfig.create({
-          data: {
-            config: defaultConfig,
-            isActive: true,
-          },
+    try {
+      config = await prisma.idDesignConfig.create({
+        data: {
+          config: defaultConfig,
+          isActive: true,
+        },
+      });
+    } catch (error: any) {
+      // If unique constraint fails, another request created it - fetch it
+      if (error?.code === 'P2002' || error?.message?.includes('Unique constraint')) {
+        config = await prisma.idDesignConfig.findFirst({
+          where: { isActive: true },
         });
-      } catch (error: any) {
-        // If unique constraint fails, another request created it - fetch it
-        if (error?.code === 'P2002' || error?.message?.includes('Unique constraint')) {
-          config = await prisma.idDesignConfig.findFirst({
-            where: { isActive: true },
-          });
-        } else {
-          throw error;
-        }
+      } else {
+        throw error;
       }
     }
+  }
 
-    // If still no config (shouldn't happen, but safety check)
-    if (!config) {
-      return {
-        success: false,
-        error: 'Failed to load or create design configuration',
-      };
-    }
-
+  // If still no config (shouldn't happen, but safety check)
+  if (!config) {
     return {
-      success: true,
-      config: config.config as z.infer<typeof idDesignConfigSchema>,
+      success: false,
+      error: 'Failed to load or create design configuration',
     };
-  });
+  }
+
+  return {
+    success: true,
+    config: config.config as z.infer<typeof idDesignConfigSchema>,
+  };
+});
 
 /**
  * Update ID design configuration (System Admin only)

@@ -8,7 +8,7 @@
     "dev:2": "vite dev --port 3002",
     "load": "node loadbalancer.js",
     "build": "prisma generate && vite build",
-    "setup-network": "tsx scripts/setup-network-ip.ts",
+    "network": "tsx scripts/setup-network-ip.ts",
     "preview": "vite preview --port 3000 --host",
     "start": "node .output/server/index.mjs",
     "test": "vitest run",

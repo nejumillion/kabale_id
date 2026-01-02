@@ -1,6 +1,8 @@
 import http from "http";
 import { networkInterfaces } from "os";
 import httpProxy from "http-proxy";
+import { join } from "path";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 
 const targets = [
     "http://localhost:3001",
@@ -124,6 +126,7 @@ const HOST = "0.0.0.0";
 
 server.listen(PORT, HOST, () => {
     const localIP = getLocalNetworkIP();
+    updateEnvFile(localIP);
     console.log(`[STARTUP] ${new Date().toISOString()} - Load balancer started`);
     console.log(`  Listening on ${HOST}:${PORT}`);
     if (localIP) {
@@ -181,4 +184,43 @@ function getLocalNetworkIP() {
     // Highest score wins
     candidates.sort((a, b) => b.score - a.score);
     return candidates[0]?.ip ?? null;
+}
+
+const updateEnvFile = (networkIP) => {
+    const envPath = join(process.cwd(), '.env');
+
+    // Determine the PUBLIC_URL value
+    let publicUrl
+    if (!networkIP) {
+    publicUrl = `http://localhost:${PORT}`;
+    console.warn('⚠️  Could not detect local network IP. Using localhost.');
+    } else {
+    publicUrl = `http://${networkIP}:${PORT}`;
+    console.log(`🌐 Detected local network IP: ${networkIP}`);
+    }
+
+    console.log(`🔗 Setting PUBLIC_URL to: ${publicUrl}`);
+
+    // Read existing .env file or create empty content
+    let envContent = '';
+    if (existsSync(envPath)) {
+    envContent = readFileSync(envPath, 'utf-8');
+    }
+
+    // Update or add PUBLIC_URL
+    const publicUrlRegex = /^PUBLIC_URL=.*$/m;
+    if (publicUrlRegex.test(envContent)) {
+    // Replace existing PUBLIC_URL
+    envContent = envContent.replace(publicUrlRegex, `PUBLIC_URL=${publicUrl}`);
+    console.log('✅ Updated existing PUBLIC_URL in .env');
+    } else {
+    // Add PUBLIC_URL (append to file, with newline if file doesn't end with one)
+    const needsNewline = envContent.length > 0 && !envContent.endsWith('\n');
+    envContent += (needsNewline ? '\n' : '') + `PUBLIC_URL=${publicUrl}\n`;
+    console.log('✅ Added PUBLIC_URL to .env');
+    }
+
+    // Write back to .env file
+    writeFileSync(envPath, envContent, 'utf-8');
+    console.log(`📝 Updated .env file at: ${envPath}`);
 }

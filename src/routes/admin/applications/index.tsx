@@ -2,29 +2,33 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Label } from '@/components/ui/label';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { reviewApplicationFn } from '@/server/kabales';
 import { getAllApplicationsFn } from '@/server/system';
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
-import { FileText, CheckCircle2, XCircle, Eye, User, Mail, Phone, Calendar, CreditCard, AlertCircle } from 'lucide-react';
+import {
+  FileText,
+  CheckCircle2,
+  XCircle,
+  Eye,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  CreditCard,
+  AlertCircle,
+} from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -34,7 +38,7 @@ export const Route = createFileRoute('/admin/applications/')({
     const result = await getAllApplicationsFn();
 
     if (!result.success) {
-       return { applications: [] };
+      return { applications: [] };
     }
 
     return { applications: result.applications };
@@ -75,9 +79,7 @@ function KabaleApplicationsPage() {
       });
 
       if (result.success) {
-        toast.success(
-          `Application ${selectedApplication.action === 'APPROVE' ? 'approved' : 'rejected'} successfully`
-        );
+        toast.success(`Application ${selectedApplication.action === 'APPROVE' ? 'approved' : 'rejected'} successfully`);
         setReviewDialogOpen(false);
         router.invalidate();
       } else {
@@ -114,9 +116,7 @@ function KabaleApplicationsPage() {
         </div>
         <div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">ID Applications</h1>
-          <p className="text-muted-foreground mt-1.5">
-            Manage all ID applications across the system
-          </p>
+          <p className="text-muted-foreground mt-1.5">Manage all ID applications across the system</p>
         </div>
       </div>
 
@@ -141,9 +141,7 @@ function KabaleApplicationsPage() {
                 </EmptyMedia>
                 <EmptyHeader>
                   <EmptyTitle className="text-xl">No applications found</EmptyTitle>
-                  <EmptyDescription className="text-base">
-                    No ID applications have been submitted yet.
-                  </EmptyDescription>
+                  <EmptyDescription className="text-base">No ID applications have been submitted yet.</EmptyDescription>
                 </EmptyHeader>
               </Empty>
             </Card>
@@ -159,7 +157,6 @@ function KabaleApplicationsPage() {
                     <TableHead className="font-semibold">Submitted</TableHead>
                     <TableHead className="font-semibold">Digital ID</TableHead>
                     <TableHead className="font-semibold">Verifications</TableHead>
-                    <TableHead className="text-right font-semibold">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -181,9 +178,7 @@ function KabaleApplicationsPage() {
                       <TableCell className="text-muted-foreground">
                         <div className="flex items-center gap-2">
                           <Phone className="h-3.5 w-3.5" />
-                          {application.citizenProfile.phone ||
-                            application.citizenProfile.user.phone ||
-                            '-'}
+                          {application.citizenProfile.phone || application.citizenProfile.user.phone || '-'}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -223,39 +218,6 @@ function KabaleApplicationsPage() {
                           {application._count.verificationLogs}
                         </div>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          {(application.status === 'SUBMITTED' ||
-                            application.status === 'PENDING_VERIFICATION') && (
-                            <>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-primary border-primary/20 hover:bg-primary/10 hover:text-primary"
-                                onClick={() => handleReviewClick(application.id, 'APPROVE')}
-                              >
-                                <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
-                                Approve
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
-                                onClick={() => handleReviewClick(application.id, 'REJECT')}
-                              >
-                                <XCircle className="h-3.5 w-3.5 mr-1.5" />
-                                Reject
-                              </Button>
-                            </>
-                          )}
-                          <Link to="/admin/citizens/$citizenId" params={{ citizenId: application.citizenProfile.id }}>
-                            <Button variant="ghost" size="sm" className="group">
-                              <Eye className="h-3.5 w-3.5 mr-1.5 transition-transform group-hover:scale-110" />
-                              View
-                            </Button>
-                          </Link>
-                        </div>
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -291,9 +253,7 @@ function KabaleApplicationsPage() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="notes" className="text-base">
-                {selectedApplication?.action === 'APPROVE'
-                  ? 'Notes (Optional)'
-                  : 'Reason for Rejection *'}
+                {selectedApplication?.action === 'APPROVE' ? 'Notes (Optional)' : 'Reason for Rejection *'}
               </Label>
               <Textarea
                 id="notes"
@@ -307,9 +267,7 @@ function KabaleApplicationsPage() {
                 className="min-h-[100px]"
               />
               {selectedApplication?.action === 'REJECT' && (
-                <p className="text-xs text-muted-foreground">
-                  A reason is required when rejecting an application.
-                </p>
+                <p className="text-xs text-muted-foreground">A reason is required when rejecting an application.</p>
               )}
             </div>
           </div>
@@ -326,14 +284,9 @@ function KabaleApplicationsPage() {
               Cancel
             </Button>
             <Button
-              variant={
-                selectedApplication?.action === 'APPROVE' ? 'default' : 'destructive'
-              }
+              variant={selectedApplication?.action === 'APPROVE' ? 'default' : 'destructive'}
               onClick={handleSubmitReview}
-              disabled={
-                isSubmitting ||
-                (selectedApplication?.action === 'REJECT' && !reviewNotes.trim())
-              }
+              disabled={isSubmitting || (selectedApplication?.action === 'REJECT' && !reviewNotes.trim())}
               className="group"
             >
               {isSubmitting ? (
