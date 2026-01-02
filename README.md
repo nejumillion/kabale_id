@@ -1,310 +1,173 @@
-Welcome to your new TanStack app! 
+# Kabale Digital ID Card System
 
-# Getting Started
+A single-city digital identity platform where citizens register online, complete their profiles, apply for digital ID cards, and receive approval after in-person verification at selected Kabale offices.
 
-To run this application:
+## Overview
+
+The Kabale Digital ID Card system provides a secure, verifiable digital identity solution for citizens. The platform supports three main user roles:
+
+- **Citizens**: Register, create profiles, apply for digital IDs, and view their status
+- **Kabale Administrators**: Verify citizens in person and approve/reject ID applications for their assigned Kabale
+- **System Administrators**: Manage the entire system, including Kabales, users, and system settings
+
+## Key Features
+
+- 🔐 Secure role-based authentication and authorization
+- 👤 Online citizen registration and profile management
+- 📋 Digital ID application workflow
+- ✅ In-person verification requirement
+- 🆔 Digital ID card generation (PDF format)
+- 📱 QR code generation for verification
+- 📊 Role-based dashboards and analytics
+- 📝 Comprehensive audit logging
+- 🎨 Customizable ID card design
+
+## Technology Stack
+
+- **Framework**: [TanStack Start](https://tanstack.com/start) with [TanStack Router](https://tanstack.com/router)
+- **Language**: TypeScript (strict mode)
+- **UI**: [Shadcn UI](https://ui.shadcn.com/) + [Tailwind CSS](https://tailwindcss.com/)
+- **ORM**: [Prisma](https://www.prisma.io/)
+- **Database**: MySQL (via MariaDB adapter)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Package Manager**: [pnpm](https://pnpm.io/)
+- **Linting/Formatting**: [Biome](https://biomejs.dev/)
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+ and pnpm installed
+- MySQL/MariaDB database server
+- Environment variables configured (see [Setup Guide](docs/SETUP.md))
+
+### Installation
 
 ```bash
+# Install dependencies
 pnpm install
-pnpm start
+
+# Set up environment variables
+cp .env.example .env  # Edit .env with your database credentials
+
+# Run database migrations
+pnpm prisma migrate dev
+
+# Seed the database (optional)
+pnpm seed
+
+# Start development server
+pnpm dev
 ```
 
-# Building For Production
+The application will be available at `http://localhost:3000`
 
-To build this application for production:
+For detailed setup instructions, see the [Setup Guide](docs/SETUP.md).
+
+## Project Structure
+
+```
+kabale_id/
+├── src/
+│   ├── components/          # React components
+│   │   ├── ui/             # Shadcn UI components
+│   │   └── ...             # Custom components
+│   ├── routes/             # TanStack Router file-based routes
+│   │   ├── admin/         # System admin routes
+│   │   ├── citizen/       # Citizen routes
+│   │   └── kabale/        # Kabale admin routes
+│   ├── server/             # Server functions and business logic
+│   │   ├── auth.ts        # Authentication functions
+│   │   ├── citizen.ts     # Citizen-related functions
+│   │   ├── kabales.ts     # Kabale-related functions
+│   │   ├── system.ts      # System admin functions
+│   │   └── rbac.ts        # Role-based access control
+│   ├── lib/               # Utility functions and helpers
+│   └── db.ts              # Prisma client configuration
+├── prisma/
+│   ├── schema.prisma      # Database schema
+│   └── migrations/        # Database migrations
+├── generated/             # Generated Prisma client
+└── docs/                  # Documentation
+```
+
+## Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- **[Architecture](docs/ARCHITECTURE.md)** - System design, RBAC, data flows, and architecture diagrams
+- **[Setup Guide](docs/SETUP.md)** - Installation, environment setup, and development configuration
+- **[Database Schema](docs/DATABASE.md)** - Entity relationships, models, and schema documentation
+- **[Authentication](docs/AUTHENTICATION.md)** - Auth flow, sessions, and security practices
+- **[API Reference](docs/API.md)** - Server functions and endpoint documentation
+- **[User Guides](docs/USER_GUIDES.md)** - User documentation for all roles
+- **[Developer Guide](docs/DEVELOPER.md)** - Code structure, conventions, and development practices
+- **[Deployment](docs/DEPLOYMENT.md)** - Production deployment instructions
+- **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+
+## Available Scripts
 
 ```bash
-pnpm build
+# Development
+pnpm dev              # Start dev server on port 3000
+pnpm dev:1            # Start dev server on port 3001
+pnpm dev:2            # Start dev server on port 3002
+pnpm load             # Start load balancer
+
+# Build
+pnpm build            # Build for production
+pnpm preview          # Preview production build
+
+# Database
+pnpm prisma migrate dev    # Run migrations
+pnpm prisma generate      # Generate Prisma client
+pnpm seed                 # Seed database
+
+# Code Quality
+pnpm lint            # Lint code
+pnpm format          # Format code
+pnpm check           # Run lint and format checks
+
+# Testing
+pnpm test            # Run tests
 ```
 
-## Testing
+## ID Application Lifecycle
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+1. **DRAFT** - Citizen creates an application but hasn't submitted it
+2. **SUBMITTED** - Citizen submits the application for review
+3. **PENDING_VERIFICATION** - Application is waiting for in-person verification
+4. **APPROVED** - Application approved after verification, Digital ID issued
+5. **REJECTED** - Application rejected after verification
 
-```bash
-pnpm test
-```
+## Digital ID States
 
-## Styling
+- **ACTIVE** - Valid and active digital ID
+- **REVOKED** - ID has been revoked by system admin
+- **EXPIRED** - ID has expired (if expiration is configured)
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+## Role-Based Access Control
 
+The system implements strict role-based access control:
 
-## Linting & Formatting
+- **SYSTEM_ADMIN**: Full system access, can manage all Kabales and users
+- **KABALE_ADMIN**: Can only access and manage data for their assigned Kabale
+- **CITIZEN**: Can only access their own profile and applications
 
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
+For detailed information, see [Architecture Documentation](docs/ARCHITECTURE.md).
 
+## Contributing
 
-```bash
-pnpm lint
-pnpm format
-pnpm check
-```
+1. Follow the code style enforced by Biome
+2. Use TypeScript strict mode
+3. Follow the existing code structure and patterns
+4. Write clear, readable code with appropriate comments
+5. Ensure all server functions include proper authorization checks
 
+## License
 
-## Shadcn
+[Add your license information here]
 
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+## Support
 
-```bash
-pnpm dlx shadcn@latest add button
-```
-
-
-
-## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add another a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-pnpm add @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-
-import "./App.css";
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
-```bash
-pnpm add @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
-
-export default App;
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+For issues, questions, or contributions, please refer to the [Troubleshooting Guide](docs/TROUBLESHOOTING.md) or open an issue in the repository.
